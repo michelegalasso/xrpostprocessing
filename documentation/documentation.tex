@@ -18,7 +18,7 @@
 %\end{abstract}
 
 \section{split\_CIFs.py}
-It splits the results of a variable composition USPEX run into multiple cif files. The script takes the following arguments from command line:
+It splits the structures with lowest enthalpy of a variable composition USPEX run into multiple CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
 	\item the output file \texttt{extended\_convex\_hull} from USPEX
 	\item the output file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
@@ -26,7 +26,7 @@ It splits the results of a variable composition USPEX run into multiple cif file
 \end{enumerate}
 The script performs the following operations:
 \begin{enumerate}
-	\item for each structure, it reads the parameters \emph{enthalpy} and \emph{fitness} from \texttt{Individuals} and the geometry from \texttt{gatheredPOSCARS}
+	\item for each structure, it reads the parameters \emph{enthalpy} and \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
 	\item it selects, for each reduced formula, the 5 structures with lowest enthalpy
 	\item it outputs the selected structures as CIF files in a new folder \textit{results}
 \end{enumerate}
@@ -41,48 +41,32 @@ The name of each CIF file has the format \texttt{i}\_\texttt{ID}\_\texttt{fitnes
 	\item[symmetry] is the space group number, determined with tolerance $0.2$\end{description}
 \textbf{Example}: \texttt{python split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
-\vspace{1cm}
-\section{sublattice\_symm.py}
-The script takes the following arguments from command line:
+\section{sublattice\_split\_CIFs.py}
+It reads the results of a variable composition USPEX run, it removes all hydrogen atoms, and then it splits the structures with lowest enthalpy into multiple CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
-	\item the output file \texttt{Individuals} from USPEX
-	\item the output file \texttt{gatheredPOSCARS} from USPEX
+	\item the output file \texttt{extended\_convex\_hull} from USPEX
+	\item the output file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
 	\item the value of the external pressure used for the USPEX run
 \end{enumerate}
 The script performs the following operations:
 \begin{enumerate}
-	\item for each structure, it reads the parameters \emph{enthalpy} and \emph{fitness} from \texttt{Individuals} and the geometry from \texttt{gatheredPOSCARS}
+	\item for each structure, it reads the parameters \emph{enthalpy} and \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
 	\item it deletes all hydrogen atoms
 	\item it selects, for each reduced formula, the 5 structures with lowest enthalpy
 	\item it outputs the selected structures as CIF files in a new folder \textit{results}
 \end{enumerate}
-The name of each CIF file has the format \texttt{i}\_\texttt{fitness}\_\texttt{enthalpy}\_\texttt{reducedformula}\_ \texttt{pressure}\_\texttt{symmetry.cif}, where:
+The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\texttt{enthalpy}\_\texttt{iupacformula}\_ \texttt{pressure}\_\texttt{symmetry.cif}, where:
 \begin{description}
 	\item[i] is a natural number which orders the output with increasing \emph{fitness}
+	\item[ID] is the structure ID from the USPEX run
 	\item[fitness] is the \emph{fitness} of the structure
 	\item[enthalpy] is the \emph{enthalpy} of the structure
-	\item[reducedformula] is the \emph{reduced formula} of the structure, with hydrogens
+	\item[iupacformula] is the \emph{IUPAC formula} of the structure, with hydrogens
 	\item[pressure] is the pressure used for the USPEX run
 	\item[symmetry] is the space group number, determined with a tolerance of $0.2$ and without hydrogens
 \end{description}
-\textbf{Example}: \texttt{python3 split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
+\textbf{Example}: \texttt{python sublattice\_split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
-\vspace{1cm}
-\section{exclusion.py}
-The script takes the following arguments from command line:
-\begin{enumerate}
-	\item the wavelength of the incident radiation in \SI{}{\angstrom}
-	\item the cut-off in \% of the maximum intensity
-	\item a number of exclusion regions in degrees, expressed as two angles separated by a hyphen (-)
-\end{enumerate}
-The script works in a folder with many CIF files, and performs the following:
-\begin{enumerate}
-	\item it opens, one by one, all CIF files and it predicts the XRD pattern of the structure according to the given wavelength
-	\item if the predicted pattern contains any peak in the exclusion regions that is bigger than the given cut-off, it deletes the CIF file
-\end{enumerate}
-\textbf{Example}: \texttt{python3 exclusion.py 0.6199 25 25-28 31-32}
-
-\vspace{1cm}
 \section{fix\_comp.py}
 The script performs postprocessing for USPEX calculations with \emph {fixed composition}. It takes the following arguments from command line:
 \begin{enumerate}
@@ -107,7 +91,6 @@ The name of each CIF file has the format \texttt{i}\_\texttt{realfitness}\_\text
 \end{description}
 \textbf{Example}: \texttt{python3 fix\_comp.py Individuals gatheredPOSCARS 50GPa}
 
-\vspace{1cm}
 \section{xr\_screening.py}
 The script performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. It contains a number of input parameters, like the name of the input files, the theoretical and experimental pressure, and so on. These parameters are all explained by comments, and some of them need to be tuned for your specific problem. The script performs the following operations:
 \begin{enumerate}
@@ -116,5 +99,19 @@ The script performs a screening of USPEX results, looking for the structures tha
 	\item it computes a fitness, describing how much the theoretical spectrum agrees with the experimental one
 	\item it outputs a graph with the theoretical and experimental spectra, where the file name starts with the value of the computed fitness
 \end{enumerate}
+
+\section{exclusion.py}
+The script takes the following arguments from command line:
+\begin{enumerate}
+	\item the wavelength of the incident radiation in \SI{}{\angstrom}
+	\item the cut-off in \% of the maximum intensity
+	\item a number of exclusion regions in degrees, expressed as two angles separated by a hyphen (-)
+\end{enumerate}
+The script works in a folder with many CIF files, and performs the following:
+\begin{enumerate}
+	\item it opens, one by one, all CIF files and it predicts the XRD pattern of the structure according to the given wavelength
+	\item if the predicted pattern contains any peak in the exclusion regions that is bigger than the given cut-off, it deletes the CIF file
+\end{enumerate}
+\textbf{Example}: \texttt{python3 exclusion.py 0.6199 25 25-28 31-32}
 
 \end{document}
