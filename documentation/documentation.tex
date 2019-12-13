@@ -20,8 +20,8 @@
 \section{split\_CIFs.py}
 The script takes the following arguments from command line:
 \begin{enumerate}
-	\item the output file \texttt{Individuals} from USPEX
-	\item the output file \texttt{gatheredPOSCARS} from USPEX
+	\item the output file \texttt{extended\_convex\_hull} from USPEX
+	\item the output file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
 	\item the value of the external pressure used for the USPEX run
 \end{enumerate}
 The script performs the following operations:
@@ -30,15 +30,16 @@ The script performs the following operations:
 	\item it selects, for each reduced formula, the 5 structures with lowest enthalpy
 	\item it outputs the selected structures as CIF files in a new folder \textit{results}
 \end{enumerate}
-The name of each CIF file has the format \texttt{i}\_\texttt{fitness}\_\texttt{enthalpy}\_\texttt{reducedformula}\_ \texttt{pressure}\_\texttt{symmetry.cif}, where:
+The name of each CIF file has the format \texttt{i}\_\texttt{ID}\_\texttt{fitness}\_\texttt{enthalpy}\_\texttt{iupacformula}\_ \texttt{pressure}\_\texttt{symmetry.cif}, where:
 \begin{description}
 	\item[i] is a natural number which orders the output with increasing \emph{fitness}
+	\item[ID] is the structure ID from the USPEX run
 	\item[fitness] is the \emph{fitness} of the structure
 	\item[enthalpy] is the \emph{enthalpy} of the structure
-	\item[reducedformula] is the \emph{reduced formula} of the structure
+	\item[iupacformula] is the \emph{IUPAC formula} of the structure
 	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$\end{description}
-\textbf{Example}: \texttt{python3 split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
+	\item[symmetry] is the space group number, determined with tolerance $0.2$\end{description}
+\textbf{Example}: \texttt{python split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
 \vspace{1cm}
 \section{sublattice\_symm.py}
