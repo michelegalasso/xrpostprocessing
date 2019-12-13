@@ -1,0 +1,45 @@
+# generated using pymatgen
+data_Ba2H21
+_symmetry_space_group_name_H-M   Pm
+_cell_length_a   3.97853720
+_cell_length_b   3.95710563
+_cell_length_c   5.19758418
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   97.60711463
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   6
+_chemical_formula_structural   Ba2H21
+_chemical_formula_sum   'Ba2 H21'
+_cell_volume   81.10796438
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  'x, -y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.050271  0.000000  0.880437  1.0
+  Ba  Ba1  1  0.505001  0.500000  0.305889  1.0
+  H  H2  2  0.036332  0.282302  0.431809  1.0
+  H  H3  2  0.222169  0.266003  0.577496  1.0
+  H  H4  2  0.516763  0.191662  0.719211  1.0
+  H  H5  2  0.561508  0.237884  0.880038  1.0
+  H  H6  2  0.996774  0.264837  0.255443  1.0
+  H  H7  1  0.250603  0.500000  0.738806  1.0
+  H  H8  1  0.268550  0.000000  0.299161  1.0
+  H  H9  1  0.285895  0.500000  0.898426  1.0
+  H  H10  1  0.339475  0.000000  0.453299  1.0
+  H  H11  1  0.629658  0.000000  0.122996  1.0
+  H  H12  1  0.737835  0.000000  0.489542  1.0
+  H  H13  1  0.739476  0.000000  0.320079  1.0
+  H  H14  1  0.772680  0.500000  0.729387  1.0
+  H  H15  1  0.774056  0.500000  0.964440  1.0
+  H  H16  1  0.907970  0.500000  0.637932  1.0
+  H  H17  1  0.945634  0.500000  0.083644  1.0

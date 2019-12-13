@@ -1,0 +1,5 @@
+spglib
+wheel
+tqdm
+ase
+pymatgen

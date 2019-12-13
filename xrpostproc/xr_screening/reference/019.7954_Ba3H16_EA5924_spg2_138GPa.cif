@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_Ba3H16
+_symmetry_space_group_name_H-M   P-1
+_cell_length_a   4.00555095
+_cell_length_b   4.23967197
+_cell_length_c   5.64492691
+_cell_angle_alpha   91.73942282
+_cell_angle_beta   110.58646710
+_cell_angle_gamma   102.57602950
+_symmetry_Int_Tables_number   2
+_chemical_formula_structural   Ba3H16
+_chemical_formula_sum   'Ba3 H16'
+_cell_volume   86.98700903
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, -y, -z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  2  0.036330  0.632755  0.266734  1.0
+  Ba  Ba1  1  0.500000  0.000000  0.000000  1.0
+  H  H2  2  0.059596  0.139901  0.281795  1.0
+  H  H3  2  0.066930  0.908202  0.610861  1.0
+  H  H4  2  0.105164  0.170945  0.121365  1.0
+  H  H5  2  0.357858  0.168578  0.593134  1.0
+  H  H6  2  0.390077  0.369547  0.566524  1.0
+  H  H7  2  0.421391  0.479123  0.114057  1.0
+  H  H8  2  0.474464  0.695507  0.662575  1.0
+  H  H9  2  0.488257  0.888938  0.613234  1.0

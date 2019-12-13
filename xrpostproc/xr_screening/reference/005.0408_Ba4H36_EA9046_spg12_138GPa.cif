@@ -1,0 +1,43 @@
+# generated using pymatgen
+data_BaH9
+_symmetry_space_group_name_H-M   C2/m
+_cell_length_a   7.73221883
+_cell_length_b   2.95482896
+_cell_length_c   6.52144159
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   101.88629234
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   12
+_chemical_formula_structural   BaH9
+_chemical_formula_sum   'Ba4 H36'
+_cell_volume   145.80311143
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, -y, -z'
+  3  '-x, y, -z'
+  4  'x, -y, z'
+  5  'x+1/2, y+1/2, z'
+  6  '-x+1/2, -y+1/2, -z'
+  7  '-x+1/2, y+1/2, -z'
+  8  'x+1/2, -y+1/2, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  4  0.117117  0.000000  0.714092  1.0
+  H  H1  4  0.052497  0.000000  0.034801  1.0
+  H  H2  4  0.069010  0.500000  0.965053  1.0
+  H  H3  4  0.084364  0.500000  0.169724  1.0
+  H  H4  4  0.101521  0.500000  0.299678  1.0
+  H  H5  4  0.119164  0.500000  0.461687  1.0
+  H  H6  4  0.168204  0.000000  0.273659  1.0
+  H  H7  4  0.181076  0.500000  0.973712  1.0
+  H  H8  4  0.196132  0.000000  0.081425  1.0
+  H  H9  4  0.198603  0.000000  0.401785  1.0

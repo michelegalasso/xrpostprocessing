@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_BaH12
+_symmetry_space_group_name_H-M   P1
+_cell_length_a   3.05364805
+_cell_length_b   3.89559370
+_cell_length_c   3.96277345
+_cell_angle_alpha   89.30499844
+_cell_angle_beta   67.76684613
+_cell_angle_gamma   88.37363844
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   BaH12
+_chemical_formula_sum   'Ba1 H12'
+_cell_volume   43.61782956
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.434242  0.847594  0.043518  1.0
+  H  H1  1  0.131728  0.060511  0.634398  1.0
+  H  H2  1  0.134239  0.499119  0.730246  1.0
+  H  H3  1  0.149789  0.668552  0.616870  1.0
+  H  H4  1  0.210791  0.344542  0.275414  1.0
+  H  H5  1  0.449657  0.322651  0.323204  1.0
+  H  H6  1  0.514668  0.343380  0.765591  1.0
+  H  H7  1  0.614666  0.087151  0.471002  1.0
+  H  H8  1  0.726402  0.338757  0.841305  1.0
+  H  H9  1  0.729028  0.673702  0.468987  1.0
+  H  H10  1  0.801993  0.504104  0.349944  1.0
+  H  H11  1  0.918022  0.079018  0.536947  1.0
+  H  H12  1  0.978934  0.326450  0.040157  1.0
