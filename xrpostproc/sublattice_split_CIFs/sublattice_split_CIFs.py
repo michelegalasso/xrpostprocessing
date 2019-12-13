@@ -1,18 +1,14 @@
+"""
+@file:      sublattice_split_CIFs.py
+@author:    Michele Galasso
+@brief:     Script for splitting USPEX results into multiple CIF files without hydrogens.
+"""
+
 import os
 import sys
-import spglib
-
-from pymatgen.core.structure import Structure
 
 from xrpostproc.common.read_convex_hull import read_convex_hull
 from xrpostproc.common.create_cif import create_cif
-
-
-def print_system(i, structure, ID, enthalpy, fitness, full_composition, pressure):
-    dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords, structure.atomic_numbers),
-                                        symprec=0.2)
-    filename = '{}_{}_{}_{}_{}_{}.cif'.format(i + 1, fitness, enthalpy, full_composition, pressure, dtset['number'])
-    structure.to(filename=os.path.join('results', filename), symprec=0.2)
 
 
 if len(sys.argv) != 4:
@@ -27,7 +23,7 @@ extended_convex_hull_POSCARS = sys.argv[2]
 pressure = sys.argv[3]
 
 # read files
-data = read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS)
+data = read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_hydrogens=True)
 
 # sort according to enthalpy
 data.sort(key=lambda tup: tup[2])
@@ -48,6 +44,6 @@ for structure, ID, enthalpy, fitness, pmg_composition in data:
 systems_to_print.sort(key=lambda tup: tup[3])
 
 for i, (structure, ID, enthalpy, fitness, pmg_composition) in enumerate(systems_to_print):
-    print_system(i, structure, ID, enthalpy, fitness, pmg_composition, pressure)
+    create_cif(i, structure, ID, enthalpy, fitness, pmg_composition, pressure)
 
 print('Done.')
