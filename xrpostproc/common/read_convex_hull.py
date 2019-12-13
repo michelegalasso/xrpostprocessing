@@ -9,7 +9,7 @@ from pymatgen.core.structure import Structure
 from .iterator_poscar_file import iterator_poscar_file
 
 
-def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS):
+def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_hydrogens=False):
     iterator = iterator_poscar_file(extended_convex_hull_POSCARS)
     data = []
     with open(extended_convex_hull, 'r') as f:
@@ -26,9 +26,15 @@ def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS):
                 ID = string.split()[0].strip('EA')
                 if ID == values[0]:
                     structure = Structure.from_str(string, fmt='poscar')
-                    enthalpy = float(values[3 + len(composition)])
-                    fitness = float(values[5 + len(composition)])
-                    data.append((structure, ID, enthalpy, fitness))
+                    pmg_composition = structure.composition
+
+                    if remove_hydrogens:
+                        structure.remove_species(['H'])
+
+                    if len(structure.frac_coords) != 0:
+                        enthalpy = float(values[3 + len(composition)])
+                        fitness = float(values[5 + len(composition)])
+                        data.append((structure, ID, enthalpy, fitness, pmg_composition))
                 else:
                     raise IOError('Structures in {} do not match data in {}'.format(extended_convex_hull_POSCARS,
                                                                                     extended_convex_hull))
