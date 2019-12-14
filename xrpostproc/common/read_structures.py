@@ -1,7 +1,7 @@
 """
-@file:      read_convex_hull.py
+@file:      read_structures.py
 @author:    Michele Galasso
-@brief:     Reads the necessary information from extended_convex_hull and extended_convex_hull_POSCARS.
+@brief:     Reads the necessary information from individuals-like and gatheredPOSCARS-like files.
 """
 
 from pymatgen.core.structure import Structure
@@ -9,10 +9,10 @@ from pymatgen.core.structure import Structure
 from .iterator_poscar_file import iterator_poscar_file
 
 
-def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_hydrogens=False):
-    iterator = iterator_poscar_file(extended_convex_hull_POSCARS)
+def read_structures(individuals, gatheredPOSCARS, remove_hydrogens=False, fixcomp=False):
+    iterator = iterator_poscar_file(gatheredPOSCARS)
     data = []
-    with open(extended_convex_hull, 'r') as f:
+    with open(individuals, 'r') as f:
         while True:
             current_line = f.readline()
             if current_line == '':
@@ -24,7 +24,13 @@ def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_
 
                 string = next(iterator)
                 ID = string.split()[0].strip('EA')
-                if ID == values[0]:
+
+                if fixcomp:
+                    ID_position = 1
+                else:
+                    ID_position = 0
+
+                if ID == values[ID_position]:
                     structure = Structure.from_str(string, fmt='poscar')
                     pmg_composition = structure.composition
 
@@ -32,10 +38,14 @@ def read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_
                         structure.remove_species(['H'])
 
                     if len(structure.frac_coords) != 0:
-                        enthalpy = float(values[3 + len(composition)])
-                        fitness = float(values[5 + len(composition)])
+                        if fixcomp:
+                            enthalpy = float(values[5 + len(composition)])
+                            fitness = float(values[5 + len(composition)]) / structure.num_sites
+                        else:
+                            enthalpy = float(values[3 + len(composition)])
+                            fitness = float(values[5 + len(composition)])
+
                         data.append((structure, ID, enthalpy, fitness, pmg_composition))
                 else:
-                    raise IOError('Structures in {} do not match data in {}'.format(extended_convex_hull_POSCARS,
-                                                                                    extended_convex_hull))
+                    raise IOError('Structures in {} do not match data in {}'.format(gatheredPOSCARS, individuals))
     return data

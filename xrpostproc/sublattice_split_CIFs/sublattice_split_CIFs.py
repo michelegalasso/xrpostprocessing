@@ -1,13 +1,13 @@
 """
 @file:      sublattice_split_CIFs.py
 @author:    Michele Galasso
-@brief:     Script for splitting USPEX results into multiple CIF files without hydrogens.
+@brief:     Script for splitting varcomp USPEX results into multiple CIF files without hydrogens.
 """
 
 import os
 import sys
 
-from xrpostproc.common.read_convex_hull import read_convex_hull
+from xrpostproc.common.read_structures import read_structures
 from xrpostproc.common.create_cif import create_cif
 
 
@@ -23,7 +23,7 @@ extended_convex_hull_POSCARS = sys.argv[2]
 pressure = sys.argv[3]
 
 # read files
-data = read_convex_hull(extended_convex_hull, extended_convex_hull_POSCARS, remove_hydrogens=True)
+data = read_structures(extended_convex_hull, extended_convex_hull_POSCARS, remove_hydrogens=True)
 
 # sort according to enthalpy
 data.sort(key=lambda tup: tup[2])
