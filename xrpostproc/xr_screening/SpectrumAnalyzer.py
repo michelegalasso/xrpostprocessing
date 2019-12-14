@@ -6,19 +6,21 @@
 @brief:     Class which implements the fitness function for X-ray optimization.
 """
 
+import os
+import spglib
 import numpy as np
 import matplotlib.pyplot as plt
 
 from pymatgen.core.structure import Structure
 from pymatgen.core.lattice import Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from .iterator_poscar_file import iterator_poscar_file
+
+from ..common.read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
-    def __init__(self, exp_pressure: int, deltaP: int, spectrum_starts: int, spectrum_ends: int, wavelength: float,
-                 sigma: float, spectrum_file: str, gatheredPOSCARS: str):
+    def __init__(self, exp_pressure: int, deltaP: int, spectrum_starts: float, spectrum_ends: float, wavelength: float,
+                 sigma: float, spectrum_file: str, extended_convex_hull: str, extended_convex_hull_POSCARS: str):
         self.exp_pressure = exp_pressure
         self.deltaP = deltaP
         self.spectrum_starts = spectrum_starts
@@ -26,7 +28,8 @@ class SpectrumAnalyzer(object):
         self.wavelength = wavelength
         self.sigma = sigma
         self.spectrum = np.loadtxt(spectrum_file)
-        self.gatheredPOSCARS = gatheredPOSCARS
+        self.extended_convex_hull = extended_convex_hull
+        self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
     def run(self, match_tol: float, factors : list):
         amplitude = self.spectrum_ends - self.spectrum_starts
@@ -40,14 +43,15 @@ class SpectrumAnalyzer(object):
         # initialize calculator
         calculator = XRDCalculator(wavelength=self.wavelength)
 
-        print('Analyzing structures..')
-        for i, string in enumerate(iterator_poscar_file(self.gatheredPOSCARS)):
-            ID = string.split()[0]
-            tmp = Structure.from_str(string, fmt='poscar')
+        # read files
+        data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS)
+
+        os.mkdir('results')
+        print('Processing structures..')
+        for i, (tmp, ID, enth, fit, pmg_comp) in enumerate(data):
             string = tmp.to(fmt='cif', symprec=0.2)
             structure = Structure.from_str(string, fmt='cif')
             structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
-            composition = structure.composition.iupac_formula.replace(' ', '')
 
             # ignore pure hydrogen
             if structure.composition.chemical_system == 'H':
@@ -92,37 +96,38 @@ class SpectrumAnalyzer(object):
                 fitness += factor * angle ** 2 / amplitude ** 2
                 fitness += factor * intensity ** 2 / 100 ** 2
 
-            # write output
-            analyzer = SpacegroupAnalyzer(structure, symprec=0.2)
-            try:
-                spg = analyzer.get_space_group_number()
-                structure.to(filename='{:08.4f}_{}_{}_spg{}_{}GPa.cif'.format(fitness, composition, ID, spg,
-                                                                              self.exp_pressure), symprec=0.2)
-            except:
-                spg = 'ND'
-            self.plot_results(exp_angles, exp_intensities, th_angles, th_intensities, ID, fitness, composition, spg)
+            # write cif
+            composition = structure.composition.iupac_formula.replace(' ', '')
+            dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords,
+                                                 structure.atomic_numbers), symprec=0.2)
+            if dtset is not None:
+                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.exp_pressure,
+                                                                    dtset['number'])
+                structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
+            else:
+                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.exp_pressure)
+
+            # write png
+            plt.figure(figsize=(16, 9))
+            x = np.arange(self.spectrum_starts, self.spectrum_ends, 0.01)
+            y_exp = np.zeros_like(x)
+
+            for angle, intensity in zip(exp_angles, exp_intensities):
+                y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
+
+            plt.plot(x, y_exp, label='experimental')
+
+            y_th = np.zeros_like(x)
+            for angle, intensity in zip(th_angles, th_intensities):
+                y_th += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
+
+            plt.plot(x, y_th, label='calculated')
+
+            plt.legend()
+            plt.savefig(os.path.join('results', filename + '.png'))
+            plt.close()
 
             print(i + 1)
-
-    def plot_results(self, exp_angles, exp_intensities, th_angles, th_intensities, ID, fitness, composition, spg):
-        plt.figure(figsize=(16, 9))
-        x = np.arange(self.spectrum_starts, self.spectrum_ends, 0.01)
-        y_exp = np.zeros_like(x)
-
-        for angle, intensity in zip(exp_angles, exp_intensities):
-            y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
-
-        plt.plot(x, y_exp, label='experimental')
-
-        y_th = np.zeros_like(x)
-        for angle, intensity in zip(th_angles, th_intensities):
-            y_th += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
-
-        plt.plot(x, y_th, label='calculated')
-
-        plt.legend()
-        plt.savefig('{:08.4f}_{}_{}_spg{}_{}GPa.png'.format(fitness, composition, ID, spg, self.exp_pressure))
-        plt.close()
 
     @staticmethod
     def choose_factor(intensity, choices):

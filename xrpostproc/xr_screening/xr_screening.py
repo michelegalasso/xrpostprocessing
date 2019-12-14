@@ -22,14 +22,15 @@ exp_pressure = 138      # pressure of the experimental powder
 th_pressure = 150       # pressure of the USPEX calculation
 deltaP = exp_pressure - th_pressure
 
-spectrum_starts = 6     # minimum angle of the experimental spectrum
-spectrum_ends = 22      # maximum angle of the experimental spectrum
-wavelength = 0.6199     # experimental wavelength
-sigma = 0.01            # parameter for gaussian smearing of peaks
-spectrum_file = 'spectrum.txt'              # name of the experimental spectrum file
-gatheredPOSCARS = 'first200_POSCARS.txt'    # name of the gatheredPOSCARS file
-match_tol = 0.25        # tolerance for matching peaks in degrees
+spectrum_starts = 6.0           # minimum angle of the experimental spectrum
+spectrum_ends = 22.0            # maximum angle of the experimental spectrum
+wavelength = 0.6199             # experimental wavelength
+sigma = 0.01                    # parameter for gaussian smearing of peaks
+spectrum_file = 'spectrum.txt'                                      # name of the experimental spectrum file
+extended_convex_hull = 'extended_convex_hull.txt'                   # name of the extended_convex_hull file
+extended_convex_hull_POSCARS = 'extended_convex_hull_POSCARS.txt'   # name of the gatheredPOSCARS file
+match_tol = 0.25                # tolerance for matching peaks in degrees
 
 analyzer = SpectrumAnalyzer(exp_pressure, deltaP, spectrum_starts, spectrum_ends, wavelength, sigma, spectrum_file,
-                            gatheredPOSCARS)
+                            extended_convex_hull, extended_convex_hull_POSCARS)
 analyzer.run(match_tol, factors)
