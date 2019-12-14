@@ -1,4 +1,6 @@
 wheel
+numpy
+matplotlib
 tqdm
 ase
 pymatgen
