@@ -67,8 +67,8 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \end{description}
 \textbf{Example}: \texttt{python sublattice\_split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
-\section{fix\_comp.py}
-The script performs postprocessing for USPEX calculations with \emph {fixed composition}. It takes the following arguments from command line:
+\section{fixcomp\_split\_CIFs.py}
+It splits all the structures of a fixed composition USPEX run into multiple CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
 	\item the output file \texttt{Individuals} from USPEX
 	\item the output file \texttt{gatheredPOSCARS} from USPEX
@@ -80,16 +80,17 @@ The script performs the following operations:
 	\item it computes \texttt{real\_fitness} = \texttt{enthalpy} / \texttt{total\_number\_of\_atoms}
 	\item it outputs the structures as CIF files in a new folder \textit{results}
 \end{enumerate}
-The name of each CIF file has the format \texttt{i}\_\texttt{realfitness}\_\texttt{iupacformula}\_\texttt{symmetry}\_ \texttt{ID}\_\texttt{pressure.cif}, where:
+The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\texttt{enthalpy}\_\texttt{iupacformula}\_ \texttt{pressure}\_\texttt{symmetry.cif}, where:
 \begin{description}
 	\item[i] is a natural number which orders the output with increasing \texttt{real\_fitness}
-	\item[realfitness] is the \texttt{real\_fitness} of the structure
+	\item[ID] is the structure ID from the USPEX run
+	\item[fitness] is the \texttt{real\_fitness} of the structure
+	\item[enthalpy] is the \emph{enthalpy} of the structure
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
-	\item[ID] is the \emph{structure ID} read from the input files
 	\item[pressure] is the pressure used for the USPEX run
+	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
 \end{description}
-\textbf{Example}: \texttt{python3 fix\_comp.py Individuals gatheredPOSCARS 50GPa}
+\textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
 \section{xr\_screening.py}
 The script performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. It contains a number of input parameters, like the name of the input files, the theoretical and experimental pressure, and so on. These parameters are all explained by comments, and some of them need to be tuned for your specific problem. The script performs the following operations:
