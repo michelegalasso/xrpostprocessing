@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{chemformula}
 \usepackage{siunitx}
+\usepackage{appendix}
 
 \usepackage{enumitem}
 \setlist[description]{leftmargin=\parindent,labelindent=\parindent}
@@ -93,16 +94,40 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
 \section{xr\_screening.py}
-The script performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. It contains a number of input parameters, like the name of the input files, the theoretical and experimental pressure, and so on. These parameters are all explained by comments, and some of them need to be tuned for your specific problem. The script performs the following operations:
+It performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. For the theory behind this script, see appendix \ref{sec:spectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
 \begin{enumerate}
-	\item for each structure, it reads the geometry from \texttt{gatheredPOSCARS}
-	\item it computes the theoretical X-ray spectrum
-	\item it computes a fitness, describing how much the theoretical spectrum agrees with the experimental one
-	\item it outputs a graph with the theoretical and experimental spectra, where the file name starts with the value of the computed fitness
+	\item the importance coefficients $f(h_i)$ used in the computation of F
+	\item the experimental pressure
+	\item the pressure of the USPEX run
+	\item the start and end angles for the computation of theoretical spectra
+	\item the experimental wavelength
+	\item the value of $\sigma$ for the gaussian smearing of peaks, used for generating output pictures
+	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental spectrum
+	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
+	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
+	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
 \end{enumerate}
+The script performs the following operations:
+\begin{enumerate}
+	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
+	\item it computes the theoretical X-ray spectrum
+	\item it computes the agreement F between the spectra
+	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2)
+	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
+\end{enumerate}
+The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
+\begin{description}
+	\item[F] is the agreement F between theoretical and experimental spectra
+	\item[ID] is the structure ID from the USPEX run
+	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
+	\item[iupacformula] is the \emph{IUPAC formula} of the structure
+	\item[pressure] is the pressure used for the USPEX run
+	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
+\end{description}
+\textbf{Example}: \texttt{python xr\_screening.py}
 
 \section{exclusion.py}
-The script takes the following arguments from command line:
+It allows to quickly filter a multitude of CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
 	\item the wavelength of the incident radiation in \SI{}{\angstrom}
 	\item the cut-off in \% of the maximum intensity
@@ -114,5 +139,52 @@ The script works in a folder with many CIF files, and performs the following:
 	\item if the predicted pattern contains any peak in the exclusion regions that is bigger than the given cut-off, it deletes the CIF file
 \end{enumerate}
 \textbf{Example}: \texttt{python3 exclusion.py 0.6199 25 25-28 31-32}
+
+\appendix
+\appendixpage
+
+\section{Spectra comparison}
+\label{sec:spectracomp}
+
+We developed a code which computes, from the experimental spectrum and the USPEX output, the degree of agreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
+
+Since we have a pressure difference, we first translate each calculated structure to the experimental pressure by using the Birch-Murnaghan equation
+\begin{equation*}
+	\Delta P = \frac{3 B_0}{2} \left[ \left( \frac{V_0}{V} \right)^{\frac{7}{3}} - \left( \frac{V_0}{V} \right)^{\frac{5}{3}} \right] \left\{ 1 + \frac{3}{4} \left( B'_0 - 4 \right) \left[ \left( \frac{V_0}{V} \right)^{\frac{2}{3}} - 1 \right] \right\}
+\end{equation*}
+where $\Delta P$ is the pressure difference, $V_0$ is the volume of the unit cell at the calculated pressure, $V$ is the volume at the experimental pressure, $B_0$ is the bulk modulus and $B'_0$ is the derivative of the bulk modulus with respect to pressure. For $B_0$ and $B'_0$ we take the average values $B_0 = 300$ and $B'_0 = 3$. 
+
+Assuming that, for small pressure variations, also $V_0/V$ will be small, we approximate the Birch-Murnaghan equation to a second order Taylor expansion in $V_0/V$ and we get the volume $V$ at the experimental pressure:
+\begin{equation*}
+	V = \frac{300}{150 + \sqrt{22500 + 300 \Delta P}} V_0
+\end{equation*}
+Then we define the following scaling factor
+\begin{equation*}
+	k = \sqrt[3]{\frac{300}{150 + \sqrt{22500 + 300 \Delta P}}}
+\end{equation*}
+that will be used to rescale the lattice parameters of all the calculated structures.
+
+After this rescaling, the relaxed structures are symmetrized with a tolerance of $0.2$ and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value $100$). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
+
+The fitness between a calculated XRD spectrum and the experimental spectrum is defined by the following fitness function
+\begin{align*}
+	F = &\sum_{i, j}^{match} \frac{(x_i^{exp} - x_j^{th})^2}{\Delta \alpha^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(x_i^{exp})^2}{\Delta \alpha^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(x_i^{th})^2}{\Delta \alpha^2} f(h_i^{th}) \\
+	&\sum_{i, j}^{match} \frac{(h_i^{exp} - h_j^{th})^2}{100^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(h_i^{exp})^2}{100^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(h_i^{th})^2}{100^2} f(h_i^{th})
+\end{align*}
+where the $x_i$ are diffraction angles, the $h_i$ are intensities, $\Delta \alpha$ is the total width of the spectra and $f(h_i)$ is an importance coefficient given by the following piecewise-defined function
+\begin{equation*}
+	f(t)=
+	\begin{cases}
+		5 & \text{if $t > 90$} \\
+		1 & \text{if $50 < t \le 90$} \\
+		0.25 & \text{if $10 < t \le 50$} \\
+		0.02 & \text{if $1 < t \le 10$} \\
+		0 & \text{if $t \le 1$}
+	\end{cases}
+\end{equation*}
+
+The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the two peaks are close to each other. At the denominator we find the total width $\Delta \alpha$ of the spectra, which is the maximum value for an angle and it allows us to get dimensionless addends. The importance coefficient just tells us that higher peaks will give a more significant contribution to the fitness than smaller peaks, and that peaks with intensity less than $1$ will give no contribution. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. It has a similar fashion to the first term, but its addends will have a much higher value since there is no subtraction at the numerator. The third term, analogously, is a sum over the \emph{theoretical rest}. The remaining three terms are very similar to the first three, but angles are substituted by intensities.
+
+It is clear that a low value of F gives a good agreement between calculated and experimental spectra, allowing a quick identification of promising candidates in the USPEX output.
 
 \end{document}
