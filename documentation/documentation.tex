@@ -173,6 +173,14 @@ The name of the new CIF files have the format \texttt{OLDNAME\_toNEWPRESSURE}, w
 \end{description}
 \textbf{Example}: \texttt{python change\_pressure.py 50 58}
 
+\section{relax\_new\_pressure.py}
+It allows an accurate translation of the structures contained in many CIF files to a different pressure by relaxing them with VASP. The script is meant to be run on a cluster. Before running it, add the following lines to your \texttt{.bashrc} file:
+\begin{enumerate}
+	\item export VASP\_SCRIPT=PATH/TO/relax\_new\_pressure/run\_vasp.py
+	\item export VASP\_PP\_PATH=PATH/TO/YOUR/pp/FOLDER
+\end{enumerate}
+Then tune the \texttt{relax\_new\_pressure.py} file with the appropriate VASP parameters for your calculation and run the script on a computing node. 
+
 \appendix
 \appendixpage
 
