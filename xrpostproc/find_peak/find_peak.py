@@ -9,8 +9,8 @@ from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 if len(sys.argv) < 4:
     print('ERROR: wrong number of arguments.')
-    print('Usage: python3 find_peak.py [wavelength] [cutoff in % max] [regions where to find peaks in degrees]')
-    print('Example: python3 find_peak.py 0.6199 15 25-28 31-32')
+    print('Usage: python find_peak.py [wavelength] [cutoff in % max] [regions where to find peaks in degrees]')
+    print('Example: python find_peak.py 0.6199 15 25-28 31-32')
     sys.exit()
 
 wl = float(sys.argv[1])
