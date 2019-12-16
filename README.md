@@ -1,20 +1,15 @@
 # Introduction 
-This is a small collection of scripts for postprocessing USPEX results when working with X-ray data. 
+This is a collection of scripts for postprocessing USPEX results when working with X-ray data.
+The instructions for using each script are in the file `documentation/documentation.pdf`.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# First use
+I suppose that you have Python 3 installed in your system, and that it is accessible through the command `python`.
+1.  Unzip the project folder
+2.  `python -m venv .venv`
+3.  `.venv\Scripts\activate` or for Linux just use `source .venv/bin/activate`
+4.  `python -m pip install -r requirements.txt`
+5.  Add permanently the project folder to your `PYTHONPATH` environment variable
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
-
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+# Before every use
+1.  Go to the project folder
+2.  `.venv\Scripts\activate` or for Linux just use `source .venv/bin/activate`
