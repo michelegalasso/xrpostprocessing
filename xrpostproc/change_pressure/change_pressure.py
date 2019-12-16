@@ -8,8 +8,8 @@ from pymatgen.core.structure import Structure
 
 if len(sys.argv) != 3:
     print('ERROR: wrong number of arguments.')
-    print('Usage: python3 change_pressure.py [initial_pressure] [final_pressure]')
-    print('Example: python3 change_pressure.py 50 58')
+    print('Usage: python change_pressure.py [initial_pressure] [final_pressure]')
+    print('Example: python change_pressure.py 50 58')
     sys.exit()
 
 initial_pressure = int(sys.argv[1])
