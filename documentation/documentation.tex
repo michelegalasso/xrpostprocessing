@@ -154,6 +154,25 @@ The script works in a folder with many CIF files, and performs the following:
 \end{enumerate}
 \textbf{Example}: \texttt{python find\_peak.py 0.6199 15 25-28 31-32}
 
+\section{change\_pressure.py}
+It translates the structures contained in many CIF files to a different pressure, by deforming the lattice parameters using a second order Taylor expansion of the Birch-Murnaghan equation. More details about the underlying theory can be found in appendix \ref{sec:spectracomp}. The script takes the following arguments from command line:
+\begin{enumerate}
+	\item the initial pressure
+	\item the final pressure
+\end{enumerate}
+The script works in a folder with many CIF files, and performs the following:
+\begin{enumerate}
+	\item it reads the structures contained in all CIF files
+	\item it deforms the lattice parameters according to the new pressure
+	\item it creates new CIF files containing the deformed structures
+\end{enumerate}
+The name of the new CIF files have the format \texttt{OLDNAME\_toNEWPRESSURE}, where:
+\begin{description}
+	\item[OLDNAME] is the name of the file with the structure at the initial pressure
+	\item[NEWPRESSURE] is the final pressure
+\end{description}
+\textbf{Example}: \texttt{python change\_pressure.py 50 58}
+
 \appendix
 \appendixpage
 
