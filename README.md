@@ -1,10 +1,10 @@
-# Introduction 
+# Introduction
 This is a collection of scripts for postprocessing USPEX results when working with X-ray data.
 The instructions for using each script are in the file `documentation/documentation.pdf`.
 
 # First use
 I suppose that you have Python 3 installed in your system, and that it is accessible through the command `python`.
-1.  `git clone git@git.uspex-team.org:mgalasso/xrpostprocessing.git`
+1.  `git clone git@git.uspex-team.org:mgalasso/xrpostprocessing.git XRpostprocessing`
 2.  `cd XRpostprocessing`
 3.  Add permanently the current folder to your `PYTHONPATH` environment variable
 4.  `python -m venv .venv`
