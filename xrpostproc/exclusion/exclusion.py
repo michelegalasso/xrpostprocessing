@@ -9,8 +9,8 @@ from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 if len(sys.argv) < 4:
     print('ERROR: wrong number of arguments.')
-    print('Usage: python3 excl.py [wavelength] [cutoff in % max] [exclusion regions in degrees]')
-    print('Example: python3 exclusion.py 0.6199 25 25-28 31-32')
+    print('Usage: python exclusion.py [wavelength] [cutoff in % max] [exclusion regions in degrees]')
+    print('Example: python exclusion.py 0.6199 25 25-28 31-32')
     sys.exit()
 
 wl = float(sys.argv[1])
