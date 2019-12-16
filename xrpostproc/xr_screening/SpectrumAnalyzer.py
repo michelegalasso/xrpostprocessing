@@ -19,10 +19,12 @@ from ..common.read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
-    def __init__(self, exp_pressure: int, deltaP: int, spectrum_starts: float, spectrum_ends: float, wavelength: float,
-                 sigma: float, spectrum_file: str, extended_convex_hull: str, extended_convex_hull_POSCARS: str):
+    def __init__(self, exp_pressure: int, th_pressure: int, spectrum_starts: float, spectrum_ends: float,
+                 wavelength: float, sigma: float, spectrum_file: str, extended_convex_hull: str,
+                 extended_convex_hull_POSCARS: str):
         self.exp_pressure = exp_pressure
-        self.deltaP = deltaP
+        self.th_pressure = th_pressure
+        self.deltaP = exp_pressure - th_pressure
         self.spectrum_starts = spectrum_starts
         self.spectrum_ends = spectrum_ends
         self.wavelength = wavelength
@@ -101,11 +103,11 @@ class SpectrumAnalyzer(object):
             dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords,
                                                  structure.atomic_numbers), symprec=0.2)
             if dtset is not None:
-                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.exp_pressure,
+                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.th_pressure,
                                                                     dtset['number'])
                 structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
             else:
-                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.exp_pressure)
+                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
 
             # write png
             plt.figure(figsize=(16, 9))
