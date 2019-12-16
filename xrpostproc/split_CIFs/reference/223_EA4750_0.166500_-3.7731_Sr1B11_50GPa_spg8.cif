@@ -1,0 +1,38 @@
+# generated using pymatgen
+data_SrB11
+_symmetry_space_group_name_H-M   Cm
+_cell_length_a   6.83654961
+_cell_length_b   4.64736482
+_cell_length_c   5.74874166
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   117.80858725
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   8
+_chemical_formula_structural   SrB11
+_chemical_formula_sum   'Sr2 B22'
+_cell_volume   161.55477492
+_cell_formula_units_Z   2
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  'x, -y, z'
+  3  'x+1/2, y+1/2, z'
+  4  'x+1/2, -y+1/2, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sr  Sr0  2  0.156903  0.000000  0.839580  1
+  B  B1  4  0.058355  0.263302  0.222198  1
+  B  B2  4  0.288965  0.209406  0.524918  1
+  B  B3  4  0.332197  0.315941  0.272769  1
+  B  B4  2  0.108363  0.500000  0.032765  1
+  B  B5  2  0.249576  0.500000  0.696396  1
+  B  B6  2  0.374989  0.500000  0.035936  1
+  B  B7  2  0.490248  0.000000  0.426111  1
+  B  B8  2  0.496519  0.000000  0.716754  1

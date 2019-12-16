@@ -1,0 +1,37 @@
+# generated using pymatgen
+data_Sr4B7
+_symmetry_space_group_name_H-M   P1
+_cell_length_a   5.08862756
+_cell_length_b   5.25647293
+_cell_length_c   5.59667437
+_cell_angle_alpha   95.66412280
+_cell_angle_beta   113.58384106
+_cell_angle_gamma   113.52764541
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   Sr4B7
+_chemical_formula_sum   'Sr4 B7'
+_cell_volume   119.69600823
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sr  Sr0  1  0.036786  0.121166  0.167247  1
+  Sr  Sr1  1  0.220525  0.736219  0.418410  1
+  Sr  Sr2  1  0.416505  0.707661  0.025905  1
+  Sr  Sr3  1  0.832545  0.196072  0.627824  1
+  B  B4  1  0.006791  0.835253  0.699447  1
+  B  B5  1  0.348536  0.141430  0.835334  1
+  B  B6  1  0.432485  0.384943  0.656651  1
+  B  B7  1  0.596339  0.319857  0.188122  1
+  B  B8  1  0.648197  0.543504  0.462497  1
+  B  B9  1  0.727581  0.417377  0.974865  1
+  B  B10  1  0.793204  0.654962  0.815503  1
