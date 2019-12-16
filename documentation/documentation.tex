@@ -127,6 +127,20 @@ The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacf
 \textbf{Example}: \texttt{python xr\_screening.py}
 
 \section{exclusion.py}
+It allows to quickly filter a multitude of CIF files, by removing those which have no significant peaks in a user-defined exclusion region of the X-ray spectrum. The script takes the following arguments from command line:
+\begin{enumerate}
+	\item the wavelength of the incident radiation in \SI{}{\angstrom}
+	\item the peak cut-off in \% of the maximum intensity
+	\item a number of intervals in degrees, expressed as two angles separated by a hyphen (-), defining the exclusion region
+\end{enumerate}
+The script works in a folder with many CIF files, and performs the following:
+\begin{enumerate}
+	\item it opens, one by one, all CIF files and it predicts the XRD pattern of the structure according to the given wavelength
+	\item if the predicted pattern contains any peak in the exclusion regions that is bigger than the given cut-off, it deletes the CIF file
+\end{enumerate}
+\textbf{Example}: \texttt{python3 exclusion.py 0.6199 25 25-28 31-32}
+
+\section{find\_peak.py}
 It allows to quickly filter a multitude of CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
 	\item the wavelength of the incident radiation in \SI{}{\angstrom}
@@ -138,7 +152,7 @@ The script works in a folder with many CIF files, and performs the following:
 	\item it opens, one by one, all CIF files and it predicts the XRD pattern of the structure according to the given wavelength
 	\item if the predicted pattern contains any peak in the exclusion regions that is bigger than the given cut-off, it deletes the CIF file
 \end{enumerate}
-\textbf{Example}: \texttt{python3 exclusion.py 0.6199 25 25-28 31-32}
+\textbf{Example}: \texttt{python find\_peak.py 0.6199 15 25-28 31-32}
 
 \appendix
 \appendixpage
