@@ -9,7 +9,7 @@ I suppose that you have Python 3 installed in your system, and that it is access
 3.  Add permanently the current folder to your `PYTHONPATH` environment variable
 4.  `python -m venv .venv`
 5.  `.venv\Scripts\activate` or for Linux just use `source .venv/bin/activate`
-6.  `python -m pip install -r requirements.txt`
+6.  `pip install -r requirements.txt`
 
 # Before every use
 1.  Go to the project folder
