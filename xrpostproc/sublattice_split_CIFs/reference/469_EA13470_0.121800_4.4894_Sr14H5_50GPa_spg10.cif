@@ -1,0 +1,82 @@
+# generated using pymatgen
+data_Sr
+_symmetry_space_group_name_H-M   P2/m
+_cell_length_a   7.13107559
+_cell_length_b   4.48022175
+_cell_length_c   9.95473326
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   98.62715169
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   10
+_chemical_formula_structural   Sr
+_chemical_formula_sum   Sr14
+_cell_volume   314.44326778
+_cell_formula_units_Z   14
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, -y, -z'
+  3  '-x, y, -z'
+  4  'x, -y, z'
+  5  'x+1/7, y, z+5/7'
+  6  '-x+1/7, -y, -z+5/7'
+  7  '-x+1/7, y, -z+5/7'
+  8  'x+1/7, -y, z+5/7'
+  9  'x+2/7, y, z+3/7'
+  10  '-x+2/7, -y, -z+3/7'
+  11  '-x+2/7, y, -z+3/7'
+  12  'x+2/7, -y, z+3/7'
+  13  'x+3/7, y, z+1/7'
+  14  '-x+3/7, -y, -z+1/7'
+  15  '-x+3/7, y, -z+1/7'
+  16  'x+3/7, -y, z+1/7'
+  17  'x+4/7, y, z+6/7'
+  18  '-x+4/7, -y, -z+6/7'
+  19  '-x+4/7, y, -z+6/7'
+  20  'x+4/7, -y, z+6/7'
+  21  'x+1/7, y+1/2, z+3/14'
+  22  '-x+1/7, -y+1/2, -z+3/14'
+  23  '-x+1/7, y+1/2, -z+3/14'
+  24  'x+1/7, -y+1/2, z+3/14'
+  25  'x+2/7, y+1/2, z+13/14'
+  26  '-x+2/7, -y+1/2, -z+13/14'
+  27  '-x+2/7, y+1/2, -z+13/14'
+  28  'x+2/7, -y+1/2, z+13/14'
+  29  'x+3/7, y+1/2, z+9/14'
+  30  '-x+3/7, -y+1/2, -z+9/14'
+  31  '-x+3/7, y+1/2, -z+9/14'
+  32  'x+3/7, -y+1/2, z+9/14'
+  33  'x+4/7, y+1/2, z+5/14'
+  34  '-x+4/7, -y+1/2, -z+5/14'
+  35  '-x+4/7, y+1/2, -z+5/14'
+  36  'x+4/7, -y+1/2, z+5/14'
+  37  'x+5/7, y+1/2, z+1/14'
+  38  '-x+5/7, -y+1/2, -z+1/14'
+  39  '-x+5/7, y+1/2, -z+1/14'
+  40  'x+5/7, -y+1/2, z+1/14'
+  41  'x+5/7, y, z+4/7'
+  42  '-x+5/7, -y, -z+4/7'
+  43  '-x+5/7, y, -z+4/7'
+  44  'x+5/7, -y, z+4/7'
+  45  'x+6/7, y, z+2/7'
+  46  '-x+6/7, -y, -z+2/7'
+  47  '-x+6/7, y, -z+2/7'
+  48  'x+6/7, -y, z+2/7'
+  49  'x+6/7, y+1/2, z+11/14'
+  50  '-x+6/7, -y+1/2, -z+11/14'
+  51  '-x+6/7, y+1/2, -z+11/14'
+  52  'x+6/7, -y+1/2, z+11/14'
+  53  'x, y+1/2, z+1/2'
+  54  '-x, -y+1/2, -z+1/2'
+  55  '-x, y+1/2, -z+1/2'
+  56  'x, -y+1/2, z+1/2'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Sr  Sr0  14  0.000000  0.000000  0.000000  1
