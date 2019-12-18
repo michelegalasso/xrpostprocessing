@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=4
+#SBATCH --time=1:00:00
+#SBATCH --job-name=relax
+#SBATCH --output=log
+#SBATCH --error=err
+
+module load python/python36
+module load mpi/impi-5.0.3 intel/mkl-11.2.3 vasp/vasp-5.4.4
+
+python relax_new_pressure.py

@@ -3,7 +3,7 @@ from pymatgen.core.structure import Structure
 from ase.calculators.vasp import Vasp
 from ase.io import read
 
-NEW_PRESSURE = 50
+NEW_PRESSURE = 58
 
 cif_files = [f for f in os.listdir('.') if '.cif' in f]
 
