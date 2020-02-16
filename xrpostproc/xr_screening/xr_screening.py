@@ -30,6 +30,9 @@ extended_convex_hull = 'extended_convex_hull.txt'                   # name of th
 extended_convex_hull_POSCARS = 'extended_convex_hull_POSCARS.txt'   # name of the gatheredPOSCARS file
 match_tol = 0.25                # tolerance for matching peaks in degrees
 
+# set to True if you are using Individuals instead of extended_convex_hull
+individuals = False
+
 analyzer = SpectrumAnalyzer(exp_pressure, th_pressure, spectrum_starts, spectrum_ends, wavelength, sigma, spectrum_file,
                             extended_convex_hull, extended_convex_hull_POSCARS)
-analyzer.run(match_tol, factors)
+analyzer.run(match_tol, factors, individuals)

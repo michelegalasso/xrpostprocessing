@@ -33,7 +33,7 @@ class SpectrumAnalyzer(object):
         self.extended_convex_hull = extended_convex_hull
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
-    def run(self, match_tol: float, factors : list):
+    def run(self, match_tol: float, factors : list, individuals: bool = False):
         amplitude = self.spectrum_ends - self.spectrum_starts
         exp_angles = self.spectrum[:, 0]
         exp_intensities = self.spectrum[:, 1]
@@ -46,7 +46,7 @@ class SpectrumAnalyzer(object):
         calculator = XRDCalculator(wavelength=self.wavelength)
 
         # read files
-        data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS)
+        data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS, fixcomp=individuals)
 
         os.mkdir('results')
         print('Processing structures..')
