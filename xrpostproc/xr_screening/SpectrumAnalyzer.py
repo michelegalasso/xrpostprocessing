@@ -109,6 +109,10 @@ class SpectrumAnalyzer(object):
             else:
                 filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
 
+            # write txt
+            with open('structures.txt', 'a') as f:
+                f.write('{:>6}    {:8.4f}    {:8.4f}\n'.format(ID, fit, fitness))
+
             # write png
             plt.figure(figsize=(16, 9))
             x = np.arange(self.spectrum_starts, self.spectrum_ends, 0.01)
