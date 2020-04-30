@@ -19,11 +19,13 @@ with open('structures.txt', 'r') as f:
         ID = int(current_line.split()[0])
         enthalpy = float(current_line.split()[1])
         xraydistance = float(current_line.split()[2])
-        if xraydistance < 25 and enthalpy < 0.2:
+        if xraydistance < 25 and enthalpy < 0.4:
             Y.append(enthalpy)
             X.append(xraydistance)
 
 plt.figure(figsize=(16, 9))
+plt.plot(X, Y, 'o')
+
 ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1)*(n % 10 < 4) * n % 10::4])
 
 for i in range(3):
@@ -36,10 +38,11 @@ for i in range(3):
         #     print('{}    {}'.format(a, b))
         # print('\n')
 
-plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy of formation (eV/atom)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
+plt.xlim(0, 26)
+plt.ylim(-0.12, 0.42)
 plt.legend()
 
 # plt.show()
-plt.savefig('pareto.svg')
+plt.savefig('pareto.png', dpi=300)
