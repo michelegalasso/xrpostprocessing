@@ -6,43 +6,50 @@
 @brief:     Script which produces an svg picture with Pareto fronts.
 """
 
+import numpy as np
 import matplotlib.pyplot as plt
 
-from xrpostproc.pareto_picture.pareto_front import pareto_front
+plt.rcParams.update({'font.size': 22})
 
 
-X = []
-Y = []
-p_frontX, p_frontY = [], []
-with open('structures.txt', 'r') as f:
-    for current_line in f.readlines():
-        ID = int(current_line.split()[0])
-        enthalpy = float(current_line.split()[1])
-        xraydistance = float(current_line.split()[2])
-        if xraydistance < 25 and enthalpy < 0.4:
-            Y.append(enthalpy)
-            X.append(xraydistance)
+p_frontsX, p_frontsY = [[]], [[]]
+with open('goodStructures_KTaWO6_4gpa', 'r') as f:
+    for line in f:
+        values = [value.strip() for value in line.split(('|'))]
+        if (len(values) > 1) and (values[1] != 'ID'):
+            rank = int(values[2])
+            enthalpy = float(values[5])
+            xraydistance = float(values[6])
+
+            if len(p_frontsX) < rank + 1:
+                p_frontsX.append([])
+                p_frontsY.append([])
+            p_frontsY[rank].append(enthalpy)
+            p_frontsX[rank].append(xraydistance)
 
 plt.figure(figsize=(16, 9))
-plt.plot(X, Y, 'o')
-
 ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1)*(n % 10 < 4) * n % 10::4])
 
 for i in range(3):
-    if len(X) != 0:
-        p_frontX, p_frontY, X, Y = pareto_front(X, Y, maxX=False, maxY=False)
-        plt.plot(p_frontX, p_frontY, 'o-', label='{} Pareto front'.format(ordinal(i + 1)))
+    indices = np.argsort(p_frontsX[i])
+    p_frontX = np.array(p_frontsX[i])[indices]
+    p_frontY = np.array(p_frontsY[i])[indices]
+    plt.plot(p_frontX, p_frontY, 'o-', label='{} Pareto front'.format(ordinal(i + 1)))
 
-        # print('{} FRONT'.format(ordinal(i + 1)))
-        # for a, b in zip(p_frontX, p_frontY):
-        #     print('{}    {}'.format(a, b))
-        # print('\n')
+X, Y = [], []
+for i, (frontX, frontY) in enumerate(zip(p_frontsX, p_frontsY)):
+    if i >= 3:
+        for xraydistance, enthalpy in zip(frontX, frontY):
+            if True:
+                X.append(xraydistance)
+                Y.append(enthalpy)
 
-plt.ylabel('Enthalpy of formation (eV/atom)')
+plt.plot(X, Y, 'o')
+plt.ylabel('Enthalpy (eV/f.u.)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
-plt.xlim(0, 26)
-plt.ylim(-0.12, 0.42)
+# plt.xlim(0.132, 0.155)
+# plt.ylim(-0.1, 2.3)
 plt.legend()
 
-# plt.show()
-plt.savefig('pareto.png', dpi=300)
+plt.show()
+# plt.savefig('pareto_4gpa.png')
