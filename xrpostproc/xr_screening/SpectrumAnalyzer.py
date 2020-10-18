@@ -61,8 +61,11 @@ class SpectrumAnalyzer(object):
 
             fitness = 0
             pattern = calculator.get_pattern(structure, two_theta_range=(self.spectrum_starts, self.spectrum_ends))
-            th_angles = pattern.x
-            th_intensities = pattern.y
+
+            # ignore very small theoretical peaks (th_intensity < 1)
+            indices = np.nonzero(pattern.y > 1)
+            th_angles = pattern.x[indices]
+            th_intensities = pattern.y[indices]
 
             # match corresponding peaks
             exp_matches, th_matches = [], []
@@ -70,7 +73,7 @@ class SpectrumAnalyzer(object):
                 partial = 0
                 counter = 0
                 for th_index, (th_angle, th_intensity) in enumerate(zip(th_angles, th_intensities)):
-                    if np.abs(th_angle - exp_angle) < match_tol and th_intensity > 1:
+                    if np.abs(th_angle - exp_angle) < match_tol:
                         counter += 1
                         exp_matches.append(exp_index)
                         th_matches.append(th_index)
@@ -88,15 +91,11 @@ class SpectrumAnalyzer(object):
 
             # experimental rest
             for angle, intensity in zip(exp_angles_rest, exp_intensities_rest):
-                factor = self.choose_factor(intensity, factors)
-                fitness += factor * angle ** 2 / amplitude ** 2
-                fitness += factor * intensity ** 2 / 100 ** 2
+                fitness += self.choose_factor(intensity, factors)
 
             # theoretical rest
             for angle, intensity in zip(th_angles_rest, th_intensities_rest):
-                factor = self.choose_factor(intensity, factors)
-                fitness += factor * angle ** 2 / amplitude ** 2
-                fitness += factor * intensity ** 2 / 100 ** 2
+                fitness += self.choose_factor(intensity, factors)
 
             # write cif
             composition = structure.composition.iupac_formula.replace(' ', '')
@@ -110,8 +109,8 @@ class SpectrumAnalyzer(object):
                 filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
 
             # write txt
-            with open('structures.txt', 'a') as f:
-                f.write('{:>6}    {:8.4f}    {:8.4f}\n'.format(ID, fit, fitness))
+            # with open('structures.txt', 'a') as f:
+            #     f.write('{:>6}    {:8.4f}    {:8.4f}\n'.format(ID, fit, fitness))
 
             # write png
             plt.figure(figsize=(16, 9))
@@ -138,13 +137,11 @@ class SpectrumAnalyzer(object):
     @staticmethod
     def choose_factor(intensity, choices):
         if intensity > 90:
-            factor = choices[0]
-        elif 50 < intensity <= 90:
-            factor = choices[1]
-        elif 10 < intensity <= 50:
-            factor = choices[2]
-        elif 1 < intensity <= 10:
-            factor = choices[3]
-        else:
-            factor = choices[4]
-        return factor
+            return choices[0]
+        if 50 < intensity <= 90:
+            return choices[1]
+        if 10 < intensity <= 50:
+            return choices[2]
+        if 1 < intensity <= 10:
+            return choices[3]
+        return choices[4]
