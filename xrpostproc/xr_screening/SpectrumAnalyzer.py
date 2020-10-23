@@ -78,7 +78,7 @@ class SpectrumAnalyzer(object):
                         exp_matches.append(exp_index)
                         th_matches.append(th_index)
                         factor = self.choose_factor(exp_intensity, factors)
-                        partial += factor * np.abs(exp_angle - th_angle) ** 2 / amplitude ** 2
+                        # partial += factor * np.abs(exp_angle - th_angle) ** 2 / amplitude ** 2
                         partial += factor * np.abs(exp_intensity - th_intensity) ** 2 / 100 ** 2
                 # average out in the case when multiple theoretical peaks match to the same experimental peak
                 if partial:
