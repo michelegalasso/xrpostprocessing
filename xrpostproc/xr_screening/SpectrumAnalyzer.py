@@ -34,7 +34,6 @@ class SpectrumAnalyzer(object):
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
     def run(self, match_tol: float, factors : list, individuals: bool = False):
-        amplitude = self.spectrum_ends - self.spectrum_starts
         exp_angles = self.spectrum[:, 0]
         exp_intensities = self.spectrum[:, 1]
         exp_intensities = exp_intensities / exp_intensities.max() * 100
@@ -77,25 +76,21 @@ class SpectrumAnalyzer(object):
                         counter += 1
                         exp_matches.append(exp_index)
                         th_matches.append(th_index)
-                        factor = self.choose_factor(exp_intensity, factors)
-                        # partial += factor * np.abs(exp_angle - th_angle) ** 2 / amplitude ** 2
-                        partial += factor * np.abs(exp_intensity - th_intensity) ** 2 / 100 ** 2
+                        partial += ((exp_intensity - th_intensity) / 100) ** 2 * (exp_intensity / 100) ** 2
                 # average out in the case when multiple theoretical peaks match to the same experimental peak
                 if partial:
                     fitness += partial / counter
 
-            exp_angles_rest = np.delete(exp_angles, exp_matches)
             exp_intensities_rest = np.delete(exp_intensities, exp_matches)
-            th_angles_rest = np.delete(th_angles, th_matches)
             th_intensities_rest = np.delete(th_intensities, th_matches)
 
             # experimental rest
-            for angle, intensity in zip(exp_angles_rest, exp_intensities_rest):
-                fitness += self.choose_factor(intensity, factors)
+            for intensity in exp_intensities_rest:
+                fitness += (intensity / 100) ** 2
 
             # theoretical rest
-            for angle, intensity in zip(th_angles_rest, th_intensities_rest):
-                fitness += self.choose_factor(intensity, factors)
+            for intensity in th_intensities_rest:
+                fitness += (intensity / 100) ** 2
 
             # write cif
             composition = structure.composition.iupac_formula.replace(' ', '')
@@ -133,15 +128,3 @@ class SpectrumAnalyzer(object):
             plt.close()
 
             print(i + 1)
-
-    @staticmethod
-    def choose_factor(intensity, choices):
-        if intensity > 90:
-            return choices[0]
-        if 50 < intensity <= 90:
-            return choices[1]
-        if 10 < intensity <= 50:
-            return choices[2]
-        if 1 < intensity <= 10:
-            return choices[3]
-        return choices[4]
