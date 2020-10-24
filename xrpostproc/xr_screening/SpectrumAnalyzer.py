@@ -60,11 +60,8 @@ class SpectrumAnalyzer(object):
 
             fitness = 0
             pattern = calculator.get_pattern(structure, two_theta_range=(self.spectrum_starts, self.spectrum_ends))
-
-            # ignore very small theoretical peaks (th_intensity < 1)
-            indices = np.nonzero(pattern.y > 1)
-            th_angles = pattern.x[indices]
-            th_intensities = pattern.y[indices]
+            th_angles = pattern.x
+            th_intensities = pattern.y
 
             # match corresponding peaks
             exp_matches, th_matches = [], []
