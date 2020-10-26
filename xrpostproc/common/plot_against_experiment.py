@@ -13,13 +13,13 @@ from pymatgen.core.structure import Structure
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 
-def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder_name = None, front = None,
-                            xraydistance = None, enthalpy = None):
+def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder_name=None, front=None,
+                            xraydistance=None, enthalpy=None):
     # get structure ID
     ID = poscar_string.split()[0]
 
     # save poscar file
-    if folder_name and front and xraydistance and enthalpy:
+    if (folder_name is not None) and (front is not None) and (xraydistance is not None) and (enthalpy is not None):
         with open('{}/{}_{:6.3f}_{:6.3f}_{}.vasp'.format(folder_name, front, xraydistance, enthalpy, ID), 'w') as f:
             f.write(poscar_string)
 
@@ -47,7 +47,7 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
     plt.legend()
 
     # plt.show()
-    if folder_name and front and xraydistance and enthalpy:
+    if (folder_name is not None) and (front is not None) and (xraydistance is not None) and (enthalpy is not None):
         plt.savefig('{}/{}_{:6.3f}_{:6.3f}_{}.png'.format(folder_name, front, xraydistance, enthalpy, ID))
     else:
         plt.savefig('{}.png'.format(ID))
