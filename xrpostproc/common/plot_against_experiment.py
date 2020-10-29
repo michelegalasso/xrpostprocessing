@@ -42,7 +42,7 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
     plt.plot(exp_angles, exp_intensities, label='experimental')
     plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
              label='{} predicted'.format(ID))
-    plt.ylabel('2θ')
+    plt.xlabel('2θ')
     plt.ylabel('Intensity')
     plt.legend()
 
