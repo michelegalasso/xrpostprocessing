@@ -16,17 +16,17 @@ from xrpostproc.common.plot_against_experiment import plot_against_experiment
 plt.rcParams.update({'font.size': 22})
 
 # input parameters
-wavelength = 0.6199
-spectrum_file = 'XRD_135gpa_pure_BaH12.txt'
-goodStructures = 'goodStructures_BaH12'
-goodStructures_POSCARS = 'goodStructures_POSCARS_BaH12'
-folder_name = 'pareto_fronts_BaH12'
-picture_name = 'pareto_BaH12.png'
+wavelength = 1.5406
+spectrum_file = 'subtracted_KTaWO6_4GPa.txt'
+goodStructures = 'goodStructures_4gpa'
+goodStructures_POSCARS = 'goodStructures_POSCARS_4gpa'
+output_folder_name = 'pareto_fronts_4gpa'
+output_picture_name = 'pareto_4gpa.png'
 
 poscars_iterator = iterator_poscar_file(goodStructures_POSCARS)
 
 # in this folder I will save the produced pictures
-os.mkdir(folder_name)
+os.mkdir(output_folder_name)
 
 p_frontsX, p_frontsY = [[]], [[]]
 with open(goodStructures, 'r') as f:
@@ -47,7 +47,7 @@ with open(goodStructures, 'r') as f:
             poscar_string = next(poscars_iterator)
             if ID == poscar_string.split()[0]:
                 if rank < 3:
-                    plot_against_experiment(poscar_string, spectrum_file, wavelength, folder_name, rank + 1,
+                    plot_against_experiment(poscar_string, spectrum_file, wavelength, output_folder_name, rank + 1,
                                             xraydistance, enthalpy)
             else:
                 raise ValueError('Structure IDs in the two input files do not match.')
@@ -73,9 +73,9 @@ plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy (eV/f.u.)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
 # plt.xlim(0.132, 0.155)
-plt.ylim(-0.1, 1.8)
+# plt.ylim(-0.1, 1.8)
 plt.legend()
 
 # plt.show()
-plt.savefig(picture_name)
+plt.savefig(output_picture_name)
 plt.close()
