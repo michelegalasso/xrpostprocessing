@@ -1,12 +1,12 @@
 """
-@file:      xr_screening.py
+@file:      powder_xrd_screening.py
 @author:    Michele Galasso
 @contact:   michele.galasso@skoltech.ru
 @date:      4 October 2019
 @brief:     Script which uses the class SpectrumAnalyzer.
 """
 
-from xrpostproc.xr_screening.SpectrumAnalyzer import SpectrumAnalyzer
+from xrpostproc.common.SpectrumAnalyzer import SpectrumAnalyzer
 
 
 factors = [

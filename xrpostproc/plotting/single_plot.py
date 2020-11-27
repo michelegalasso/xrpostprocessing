@@ -9,9 +9,9 @@
 from xrpostproc.common.plot_against_experiment import plot_against_experiment
 
 # input parameters
-wavelength = 0.2952
-poscar_file = 'POSCAR'
-exp_spectrum_file = 'XRD_30gpa_NaCl.txt'
+wavelength = 1.5406
+poscar_file = 'EA2763.vasp'
+exp_spectrum_file = 'subtracted_KTaWO6_4GPa.txt'
 
 with open(poscar_file, 'r') as f:
     poscar_string = f.read()
