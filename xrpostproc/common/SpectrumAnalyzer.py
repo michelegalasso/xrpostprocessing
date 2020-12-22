@@ -15,7 +15,8 @@ from pymatgen.core.structure import Structure
 from pymatgen.core.lattice import Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
-from ..common.read_structures import read_structures
+from .get_structure_factors import get_structure_factors
+from .read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
