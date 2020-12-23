@@ -16,113 +16,158 @@ from pymatgen.core.lattice import Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 from .get_structure_factors import get_structure_factors
+from .iterator_poscar_file import iterator_poscar_file
 from .read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
-    def __init__(self, exp_pressure: int, th_pressure: int, spectrum_starts: float, spectrum_ends: float,
-                 wavelength: float, sigma: float, spectrum_file: str, extended_convex_hull: str,
-                 extended_convex_hull_POSCARS: str):
+    def __init__(self, exp_pressure: int, th_pressure: int, extended_convex_hull: str,
+                 extended_convex_hull_POSCARS: str, spectrum_file: str = None,
+                 spectrum_starts: float = None, spectrum_ends: float = None,
+                 wavelength: float = None, sigma: float = None, hkl_file: str = None):
+        """
+        Initializes the class.
+
+        Args:
+            exp_pressure:
+            th_pressure:
+            extended_convex_hull:
+            extended_convex_hull_POSCARS:
+            spectrum_file:
+            spectrum_starts:
+            spectrum_ends:
+            wavelength:
+            sigma:
+            hkl_file:
+        """
         self.exp_pressure = exp_pressure
         self.th_pressure = th_pressure
         self.deltaP = exp_pressure - th_pressure
-        self.spectrum_starts = spectrum_starts
-        self.spectrum_ends = spectrum_ends
-        self.wavelength = wavelength
-        self.sigma = sigma
-        self.spectrum = np.loadtxt(spectrum_file)
         self.extended_convex_hull = extended_convex_hull
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
-    def run(self, match_tol: float, factors : list, individuals: bool = False):
-        exp_angles = self.spectrum[:, 0]
-        exp_intensities = self.spectrum[:, 1]
-        exp_intensities = exp_intensities / exp_intensities.max() * 100
+        if spectrum_file is not None:
+            self.spectrum_file = spectrum_file
+            self.spectrum_starts = spectrum_starts
+            self.spectrum_ends = spectrum_ends
+            self.wavelength = wavelength
+            self.sigma = sigma
 
+            for param in ['spectrum_starts', 'spectrum_ends', 'wavelength', 'sigma']:
+                if getattr(self, param) is None:
+                    raise ValueError(f'Powder mode requires parameter {param}.')
+            self.mode = 'powder'
+        else:
+            self.hkl_file = hkl_file
+
+            for param in ['hkl_file']:
+                if getattr(self, param) is None:
+                    raise ValueError(f'SCXRD mode requires parameter {param}.')
+            self.mode = 'scxrd'
+
+    def run(self, match_tol: float = None, individuals: bool = False):
+        """
+        Creates pictures and cif files in results folder.
+
+        Args:
+            match_tol:
+            individuals:
+
+        Returns:
+            None
+        """
         # pressure correction
         k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
 
-        # initialize calculator
-        calculator = XRDCalculator(wavelength=self.wavelength)
+        if self.mode == 'powder':
+            if match_tol is None:
+                raise ValueError('Powder mode requires parameter match_tol.')
 
-        # read files
-        data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS, fixcomp=individuals)
+            spectrum = np.loadtxt(self.spectrum_file)
+            exp_angles = spectrum[:, 0]
+            exp_intensities = spectrum[:, 1]
+            exp_intensities = exp_intensities / exp_intensities.max() * 100
 
-        os.mkdir('results')
-        print('Processing structures..')
-        for i, (tmp, ID, enth, fit, pmg_comp) in enumerate(data):
-            string = tmp.to(fmt='cif', symprec=0.2)
-            structure = Structure.from_str(string, fmt='cif')
-            structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
+            # initialize calculator
+            calculator = XRDCalculator(wavelength=self.wavelength)
 
-            # ignore pure hydrogen
-            if structure.composition.chemical_system == 'H':
-                continue
+            # read files
+            data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS, fixcomp=individuals)
 
-            fitness = 0
-            pattern = calculator.get_pattern(structure, two_theta_range=(self.spectrum_starts, self.spectrum_ends))
-            th_angles = pattern.x
-            th_intensities = pattern.y
+            os.mkdir('results')
+            print('Processing structures..')
+            for i, (tmp, ID, enth, fit, pmg_comp) in enumerate(data):
+                string = tmp.to(fmt='cif', symprec=0.2)
+                structure = Structure.from_str(string, fmt='cif')
+                structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
-            # match corresponding peaks
-            exp_matches, th_matches = [], []
-            for exp_index, (exp_angle, exp_intensity) in enumerate(zip(exp_angles, exp_intensities)):
-                partial = 0
-                counter = 0
-                for th_index, (th_angle, th_intensity) in enumerate(zip(th_angles, th_intensities)):
-                    if np.abs(th_angle - exp_angle) < match_tol:
-                        counter += 1
-                        exp_matches.append(exp_index)
-                        th_matches.append(th_index)
-                        partial += ((exp_intensity - th_intensity) / 100) ** 2 * (exp_intensity / 100) ** 2
-                # average out in the case when multiple theoretical peaks match to the same experimental peak
-                if partial:
-                    fitness += partial / counter
+                # ignore pure hydrogen
+                if structure.composition.chemical_system == 'H':
+                    continue
 
-            exp_intensities_rest = np.delete(exp_intensities, exp_matches)
-            th_intensities_rest = np.delete(th_intensities, th_matches)
+                fitness = 0
+                pattern = calculator.get_pattern(structure, two_theta_range=(self.spectrum_starts, self.spectrum_ends))
+                th_angles = pattern.x
+                th_intensities = pattern.y
 
-            # experimental rest
-            for intensity in exp_intensities_rest:
-                fitness += (intensity / 100) ** 2
+                # match corresponding peaks
+                exp_matches, th_matches = [], []
+                for exp_index, (exp_angle, exp_intensity) in enumerate(zip(exp_angles, exp_intensities)):
+                    partial = 0
+                    counter = 0
+                    for th_index, (th_angle, th_intensity) in enumerate(zip(th_angles, th_intensities)):
+                        if np.abs(th_angle - exp_angle) < match_tol:
+                            counter += 1
+                            exp_matches.append(exp_index)
+                            th_matches.append(th_index)
+                            partial += ((exp_intensity - th_intensity) / 100) ** 2 * (exp_intensity / 100) ** 2
+                    # average out in the case when multiple theoretical peaks match to the same experimental peak
+                    if partial:
+                        fitness += partial / counter
 
-            # theoretical rest
-            for intensity in th_intensities_rest:
-                fitness += (intensity / 100) ** 2
+                exp_intensities_rest = np.delete(exp_intensities, exp_matches)
+                th_intensities_rest = np.delete(th_intensities, th_matches)
 
-            # write cif
-            composition = structure.composition.iupac_formula.replace(' ', '')
-            dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords,
-                                                 structure.atomic_numbers), symprec=0.2)
-            if dtset is not None:
-                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.th_pressure,
-                                                                    dtset['number'])
-                structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
-            else:
-                filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
+                # experimental rest
+                for intensity in exp_intensities_rest:
+                    fitness += (intensity / 100) ** 2
 
-            # write txt
-            # with open('structures.txt', 'a') as f:
-            #     f.write('{:>6}    {:8.4f}    {:8.4f}\n'.format(ID, fit, fitness))
+                # theoretical rest
+                for intensity in th_intensities_rest:
+                    fitness += (intensity / 100) ** 2
 
-            # write png
-            plt.figure(figsize=(16, 9))
-            x = np.arange(self.spectrum_starts, self.spectrum_ends, 0.01)
-            y_exp = np.zeros_like(x)
+                # write cif
+                composition = structure.composition.iupac_formula.replace(' ', '')
+                dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords,
+                                                     structure.atomic_numbers), symprec=0.2)
+                if dtset is not None:
+                    filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.th_pressure,
+                                                                        dtset['number'])
+                    structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
+                else:
+                    filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
 
-            for angle, intensity in zip(exp_angles, exp_intensities):
-                y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
+                # write png
+                plt.figure(figsize=(16, 9))
+                x = np.arange(self.spectrum_starts, self.spectrum_ends, 0.01)
+                y_exp = np.zeros_like(x)
 
-            plt.plot(x, y_exp, label='experimental')
+                for angle, intensity in zip(exp_angles, exp_intensities):
+                    y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
 
-            y_th = np.zeros_like(x)
-            for angle, intensity in zip(th_angles, th_intensities):
-                y_th += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
+                plt.plot(x, y_exp, label='experimental')
 
-            plt.plot(x, y_th, label='calculated')
+                y_th = np.zeros_like(x)
+                for angle, intensity in zip(th_angles, th_intensities):
+                    y_th += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
 
-            plt.legend()
-            plt.savefig(os.path.join('results', filename + '.png'))
-            plt.close()
+                plt.plot(x, y_th, label='calculated')
 
-            print(i + 1)
+                plt.legend()
+                plt.savefig(os.path.join('results', filename + '.png'))
+                plt.close()
+
+                print(i + 1)
+        else:
+            pass
+            # here the SCXRD code
