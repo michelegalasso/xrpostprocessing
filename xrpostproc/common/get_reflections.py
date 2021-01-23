@@ -1,5 +1,5 @@
 """
-@file:      get_structure_factors.py
+@file:      get_reflections.py
 @author:    Michele Galasso
 @contact:   m.galasso@yandex.com
 @date:      3 November 2020
@@ -10,10 +10,7 @@ import os
 import json
 import numpy as np
 
-from math import sin, cos, asin, pi, degrees
-from pymatgen.analysis.diffraction.core import AbstractDiffractionPatternCalculator
-from pymatgen.analysis.diffraction.core import DiffractionPattern
-from pymatgen.analysis.diffraction.core import get_unique_families
+from math import pi
 
 
 with open(os.path.join(os.path.dirname(__file__),
@@ -21,7 +18,7 @@ with open(os.path.join(os.path.dirname(__file__),
     ATOMIC_SCATTERING_PARAMS = json.load(f)
 
 
-def get_structure_factors(structure, min_d_spacing, scaled=True):
+def get_reflections(structure, min_d_spacing):
     """
     Calculates the diffraction pattern for a structure.
 
@@ -73,8 +70,7 @@ def get_structure_factors(structure, min_d_spacing, scaled=True):
     fcoords = np.array(fcoords)
     occus = np.array(occus)
     dwfactors = np.array(dwfactors)
-    planes = []
-    intensities = []
+    reflections = []
 
     for hkl, g_hkl, ind, _ in sorted(
             recip_pts, key=lambda i: (i[1], -i[0][0], -i[0][1], -i[0][2])):
@@ -82,8 +78,9 @@ def get_structure_factors(structure, min_d_spacing, scaled=True):
         hkl = [int(round(i)) for i in hkl]
         if g_hkl != 0:
 
-            # s = sin(theta) / wavelength = 1 / 2d = |ghkl| / 2 (d =
-            # 1/|ghkl|)
+            d_hkl = 1 / g_hkl
+
+            # s = sin(theta) / wavelength = 1 / 2d = |g_hkl| / 2 (d = 1/|g_hkl|)
             s = g_hkl / 2
 
             # Store s^2 since we are using it a few times.
@@ -99,18 +96,15 @@ def get_structure_factors(structure, min_d_spacing, scaled=True):
             #   for site in structure:
             #      el = site.specie
             #      coeff = ATOMIC_SCATTERING_PARAMS[el.symbol]
-            #      fs = el.Z - 41.78214 * s2 * sum(
-            #          [d[0] * exp(-d[1] * s2) for d in coeff])
-            fs = zs - 41.78214 * s2 * np.sum(
-                coeffs[:, :, 0] * np.exp(-coeffs[:, :, 1] * s2), axis=1)
+            #      fs = el.Z - 41.78214 * s2 * sum([d[0] * exp(-d[1] * s2) for d in coeff])
+            fs = zs - 41.78214 * s2 * np.sum(coeffs[:, :, 0] * np.exp(-coeffs[:, :, 1] * s2), axis=1)
 
             dw_correction = np.exp(-dwfactors * s2)
 
             # Structure factor = sum of atomic scattering factors (with
             # position factor exp(2j * pi * g.r and occupancies).
             # Vectorized computation.
-            f_hkl = np.sum(fs * occus * np.exp(2j * pi * g_dot_r)
-                           * dw_correction)
+            f_hkl = np.sum(fs * occus * np.exp(2j * pi * g_dot_r) * dw_correction)
 
             # Intensity for hkl is modulus square of structure factor.
             i_hkl = (f_hkl * f_hkl.conjugate()).real
@@ -119,16 +113,12 @@ def get_structure_factors(structure, min_d_spacing, scaled=True):
                 # Use Miller-Bravais indices for hexagonal lattices.
                 hkl = (hkl[0], hkl[1], - hkl[0] - hkl[1], hkl[2])
 
-            planes.append(hkl)
-            intensities.append(i_hkl)
+            # Deal with floating point precision issues.
+            intensities = [r[0] for r in reflections]
+            ind = np.where(np.abs(np.subtract(intensities, i_hkl)) < 0.01)
+            if len(ind[0]) > 0:
+                reflections[ind[0][0]][1].append(tuple(hkl))
+            else:
+                reflections.append([i_hkl, [tuple(hkl)], d_hkl])
 
-    planes = np.array(planes)
-    intensities = np.array(intensities)
-
-    indices = np.argsort(intensities)[::-1]
-    planes = planes[indices]
-    intensities = intensities[indices]
-
-    # TODO: merge planes which have the same intensity
-
-    return planes, intensities
+    return reflections

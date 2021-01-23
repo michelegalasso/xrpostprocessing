@@ -15,7 +15,7 @@ from pymatgen.core.structure import Structure
 from pymatgen.core.lattice import Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
-from .get_structure_factors import get_structure_factors
+from .get_reflections import get_reflections
 from .iterator_poscar_file import iterator_poscar_file
 from .read_structures import read_structures
 
@@ -176,4 +176,4 @@ class SpectrumAnalyzer(object):
                 structure = Structure.from_str(poscar_string, fmt='poscar')
                 # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
-                planes, intensities = get_structure_factors(structure, self.min_d_spacing)
+                planes, intensities = get_reflections(structure, self.min_d_spacing)
