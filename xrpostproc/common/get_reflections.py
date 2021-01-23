@@ -20,14 +20,11 @@ with open(os.path.join(os.path.dirname(__file__),
 
 def get_reflections(structure, min_d_spacing):
     """
-    Calculates the diffraction pattern for a structure.
+    Calculates the theoretical SCXRD reflections for a structure.
 
     Args:
         structure (Structure): Input structure
         min_d_spacing (float): Minimum d spacing
-        scaled (bool): Whether to return scaled intensities. The maximum
-            peak is set to a value of 100. Defaults to True. Use False if
-            you need the absolute values to combine XRD plots.
 
     Returns:
         (XRDPattern)
