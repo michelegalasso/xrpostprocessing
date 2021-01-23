@@ -15,8 +15,9 @@ th_pressure = 0         # pressure of the USPEX calculation
 
 extended_convex_hull = 'DOESNOTEXIST.txt'           # name of the extended_convex_hull file
 extended_convex_hull_POSCARS = 'gatheredPOSCARS'    # name of the gatheredPOSCARS file
-hkl_file = 'test_P1.hkl'            # name of the experimental hkl file
+hkl_file = 'test_P1.hkl'                            # name of the experimental hkl file
+min_d_spacing = 0.68                                # minimum spacing between hkl planes
 
 analyzer = SpectrumAnalyzer(exp_pressure, th_pressure, extended_convex_hull, extended_convex_hull_POSCARS,
-                            hkl_file=hkl_file)
+                            hkl_file=hkl_file, min_d_spacing=min_d_spacing)
 analyzer.run()

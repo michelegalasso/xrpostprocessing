@@ -24,7 +24,8 @@ class SpectrumAnalyzer(object):
     def __init__(self, exp_pressure: int, th_pressure: int, extended_convex_hull: str,
                  extended_convex_hull_POSCARS: str, spectrum_file: str = None,
                  spectrum_starts: float = None, spectrum_ends: float = None,
-                 wavelength: float = None, sigma: float = None, hkl_file: str = None):
+                 wavelength: float = None, sigma: float = None, hkl_file: str = None,
+                 min_d_spacing: float = None):
         """
         Initializes the class.
 
@@ -59,8 +60,9 @@ class SpectrumAnalyzer(object):
             self.mode = 'powder'
         else:
             self.hkl_file = hkl_file
+            self.min_d_spacing = min_d_spacing
 
-            for param in ['hkl_file']:
+            for param in ['hkl_file', 'min_d_spacing']:
                 if getattr(self, param) is None:
                     raise ValueError(f'SCXRD mode requires parameter {param}.')
             self.mode = 'scxrd'
@@ -170,6 +172,8 @@ class SpectrumAnalyzer(object):
 
                 print(i + 1)
         else:
-            for i, poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
+            for poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
                 structure = Structure.from_str(poscar_string, fmt='poscar')
                 # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
+
+                planes, intensities = get_structure_factors(structure, self.min_d_spacing)
