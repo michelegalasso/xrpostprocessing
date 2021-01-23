@@ -76,6 +76,9 @@ class SpectrumAnalyzer(object):
         Returns:
             None
         """
+        os.mkdir('results')
+        print('Processing structures..')
+
         # pressure correction
         k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
 
@@ -94,8 +97,6 @@ class SpectrumAnalyzer(object):
             # read files
             data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS, fixcomp=individuals)
 
-            os.mkdir('results')
-            print('Processing structures..')
             for i, (tmp, ID, enth, fit, pmg_comp) in enumerate(data):
                 string = tmp.to(fmt='cif', symprec=0.2)
                 structure = Structure.from_str(string, fmt='cif')
@@ -169,5 +170,6 @@ class SpectrumAnalyzer(object):
 
                 print(i + 1)
         else:
-            pass
-            # here the SCXRD code
+            for i, poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
+                structure = Structure.from_str(poscar_string, fmt='poscar')
+                # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
