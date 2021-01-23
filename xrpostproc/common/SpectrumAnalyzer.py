@@ -176,4 +176,6 @@ class SpectrumAnalyzer(object):
                 structure = Structure.from_str(poscar_string, fmt='poscar')
                 # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
-                planes, intensities = get_reflections(structure, self.min_d_spacing)
+                reflections = get_reflections(structure, self.min_d_spacing)
+
+                # TODO: compute weighted R-factor based on obtained reflections
