@@ -176,6 +176,36 @@ class SpectrumAnalyzer(object):
                 structure = Structure.from_str(poscar_string, fmt='poscar')
                 # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
-                reflections = get_reflections(structure, self.min_d_spacing)
+                # read hkl file
+                exp_reflections = []
+                with open(self.hkl_file, 'r') as f:
+                    for line in f:
+                        values = line.split()
 
-                # TODO: compute weighted R-factor based on obtained reflections
+                        # the hkl file terminates with all zeros
+                        if values == ['0', '0', '0', '0.00', '0.00']:
+                            break
+
+                        hkl = (int(values[0]), int(values[1]), int(values[2]))
+                        i_hkl = float(values[3])
+                        sigma_hkl = float(values[4])
+
+                        exp_reflections.append([i_hkl, hkl, sigma_hkl])
+
+                th_reflections = get_reflections(structure, self.min_d_spacing)
+
+                numerator = 0
+                denominator = 0
+                for i_hkl, hkl, sigma_hkl in exp_reflections:
+                    th_hkls = [r[1] for r in th_reflections]
+
+                    if hkl in th_hkls:
+                        index = th_hkls.index(hkl)
+                    elif (-hkl[0], -hkl[1], -hkl[2]) in th_hkls:
+                        index = th_hkls.index((-hkl[0], -hkl[1], -hkl[2]))
+                    else:
+                        raise ValueError(f'Experimental reflection {hkl} with intensity {i_hkl} not found in theory.')
+
+                    if index:
+                        numerator += (1 / sigma_hkl) * (i_hkl - th_reflections[index][0]) ** 2
+                        denominator += (1 / sigma_hkl) * i_hkl ** 2
