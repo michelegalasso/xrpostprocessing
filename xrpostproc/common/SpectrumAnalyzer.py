@@ -214,9 +214,8 @@ class SpectrumAnalyzer(object):
                     else:
                         raise ValueError(f'Experimental reflection {hkl} with intensity {i_hkl} not found in theory.')
 
-                    if index:
-                        numerator += (1 / sigma_hkl ** 2) * (i_hkl - th_reflections[index][0]) ** 2
-                        denominator += (1 / sigma_hkl ** 2) * i_hkl ** 2
+                    numerator += (1 / sigma_hkl ** 2) * (i_hkl - th_reflections[index][0]) ** 2
+                    denominator += (1 / sigma_hkl ** 2) * i_hkl ** 2
 
                 wR = np.sqrt(numerator / denominator)
                 results[ID] = wR
