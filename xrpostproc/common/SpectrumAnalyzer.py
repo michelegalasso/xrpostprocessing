@@ -78,13 +78,13 @@ class SpectrumAnalyzer(object):
         Returns:
             None
         """
-        os.mkdir('results')
         print('Processing structures..')
 
         # pressure correction
         k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
 
         if self.mode == 'powder':
+            os.mkdir('results')
             if match_tol is None:
                 raise ValueError('Powder mode requires parameter match_tol.')
 
@@ -172,7 +172,9 @@ class SpectrumAnalyzer(object):
 
                 print(i + 1)
         else:
+            results = {}
             for poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
+                ID = poscar_string.split()[0]
                 structure = Structure.from_str(poscar_string, fmt='poscar')
                 # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
@@ -194,6 +196,12 @@ class SpectrumAnalyzer(object):
 
                 th_reflections = get_reflections(structure, self.min_d_spacing)
 
+                exp_reflections = np.array(exp_reflections, dtype=object)
+                th_reflections = np.array(th_reflections, dtype=object)
+
+                # scale theoretical intensities according to experimental maximum
+                th_reflections[:, 0] = th_reflections[:, 0] / max(th_reflections[:, 0]) * max(exp_reflections[:, 0])
+
                 numerator = 0
                 denominator = 0
                 for i_hkl, hkl, sigma_hkl in exp_reflections:
@@ -207,5 +215,15 @@ class SpectrumAnalyzer(object):
                         raise ValueError(f'Experimental reflection {hkl} with intensity {i_hkl} not found in theory.')
 
                     if index:
-                        numerator += (1 / sigma_hkl) * (i_hkl - th_reflections[index][0]) ** 2
-                        denominator += (1 / sigma_hkl) * i_hkl ** 2
+                        numerator += (1 / sigma_hkl ** 2) * (i_hkl - th_reflections[index][0]) ** 2
+                        denominator += (1 / sigma_hkl ** 2) * i_hkl ** 2
+
+                wR = np.sqrt(numerator / denominator)
+                results[ID] = wR
+
+                print(ID)
+
+            results = {k: v for k, v in sorted(results.items(), key=lambda item: item[1])}
+            with open('results.txt', 'w') as f:
+                for ID, wR in results.items():
+                    f.write(f'{ID:6s}  {wR:6.4f}\n')
