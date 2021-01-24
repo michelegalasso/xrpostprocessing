@@ -110,12 +110,13 @@ def get_reflections(structure, min_d_spacing):
                 # Use Miller-Bravais indices for hexagonal lattices.
                 hkl = (hkl[0], hkl[1], - hkl[0] - hkl[1], hkl[2])
 
-            # Deal with floating point precision issues.
-            intensities = [r[0] for r in reflections]
-            ind = np.where(np.abs(np.subtract(intensities, i_hkl)) < 0.01)
-            if len(ind[0]) > 0:
-                reflections[ind[0][0]][1].append(tuple(hkl))
+            # Merge equivalent reflections.
+            hkls = [r[1] for r in reflections]
+            if (-hkl[0], -hkl[1], -hkl[2]) not in hkls:
+                reflections.append([i_hkl, tuple(hkl), d_hkl])
             else:
-                reflections.append([i_hkl, [tuple(hkl)], d_hkl])
+                ind = hkls.index((-hkl[0], -hkl[1], -hkl[2]))
+                assert reflections[ind][0] == i_hkl
+                assert reflections[ind][2] == d_hkl
 
     return reflections
