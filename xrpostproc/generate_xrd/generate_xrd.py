@@ -8,7 +8,9 @@ from pymatgen.core.structure import Structure
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 
-example_text = 'python generate_xrd.py --wavelength'
+example_text = '''example:
+
+python generate_xrd.py -w 0.6199 -m 5 -M 60 -s 0.1'''
 
 parser = argparse.ArgumentParser(epilog=example_text)
 parser.add_argument('-w', '--wavelength', help='wavelength of the inciding radiation', type=float)
