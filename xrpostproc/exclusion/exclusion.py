@@ -7,7 +7,12 @@ from copy import copy
 from pymatgen import Structure
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
-parser = argparse.ArgumentParser()
+
+example_text = '''example:
+
+python generate_xrd.py -w 0.6199 -c 25 -l 25,31 -r 28,32 -m 5 -M 60'''
+
+parser = argparse.ArgumentParser(epilog=example_text)
 parser.add_argument('-w', '--wavelength', help='wavelength of the inciding radiation', type=float)
 parser.add_argument('-m', '--minangle', help='minimum angle of the generated XRD spectra', type=float)
 parser.add_argument('-M', '--maxangle', help='maximum angle of the generated XRD spectra', type=float)
@@ -26,7 +31,7 @@ excl_regions = []
 for l, r in zip(lextremes, rextremes):
     excl_regions.append((float(l), float(r)))
 
-cif_files = [f for f in os.listdir('.') if '.cif' in f]
+cif_files = [f for f in os.listdir('.') if f.endswith('.cif')]
 to_remove = ''
 
 for f in tqdm(cif_files):
