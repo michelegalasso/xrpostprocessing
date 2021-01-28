@@ -10,7 +10,7 @@ from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 example_text = '''example:
 
-python generate_xrd.py -w 0.6199 -c 25 -l 25,31 -r 28,32 -m 5 -M 60'''
+python exclusion.py -w 0.6199 -c 25 -l 25,31 -r 28,32 -m 5 -M 60'''
 
 parser = argparse.ArgumentParser(epilog=example_text)
 parser.add_argument('-w', '--wavelength', help='wavelength of the inciding radiation', type=float)
