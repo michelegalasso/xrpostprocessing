@@ -24,8 +24,7 @@ class SpectrumAnalyzer(object):
     def __init__(self, exp_pressure: int, th_pressure: int, extended_convex_hull: str,
                  extended_convex_hull_POSCARS: str, spectrum_file: str = None,
                  spectrum_starts: float = None, spectrum_ends: float = None,
-                 wavelength: float = None, sigma: float = None, hkl_file: str = None,
-                 min_d_spacing: float = None):
+                 wavelength: float = None, sigma: float = None, hkl_file: str = None):
         """
         Initializes the class.
 
@@ -60,9 +59,8 @@ class SpectrumAnalyzer(object):
             self.mode = 'powder'
         else:
             self.hkl_file = hkl_file
-            self.min_d_spacing = min_d_spacing
 
-            for param in ['hkl_file', 'min_d_spacing']:
+            for param in ['hkl_file']:
                 if getattr(self, param) is None:
                     raise ValueError(f'SCXRD mode requires parameter {param}.')
             self.mode = 'scxrd'
@@ -180,6 +178,7 @@ class SpectrumAnalyzer(object):
 
                 # read hkl file
                 exp_reflections = []
+                min_d_spacing = 10000
                 with open(self.hkl_file, 'r') as f:
                     for line in f:
                         values = line.split()
@@ -192,9 +191,13 @@ class SpectrumAnalyzer(object):
                         i_hkl = float(values[3])
                         sigma_hkl = float(values[4])
 
+                        d_spacing = structure.lattice.d_hkl(list(hkl))
+                        if d_spacing < min_d_spacing:
+                            min_d_spacing = d_spacing
+
                         exp_reflections.append([i_hkl, hkl, sigma_hkl])
 
-                th_reflections = get_reflections(structure, self.min_d_spacing)
+                th_reflections = get_reflections(structure, min_d_spacing)
 
                 exp_reflections = np.array(exp_reflections, dtype=object)
                 th_reflections = np.array(th_reflections, dtype=object)
