@@ -197,6 +197,7 @@ class SpectrumAnalyzer(object):
 
                         exp_reflections.append([i_hkl, hkl, sigma_hkl])
 
+                min_d_spacing = np.floor(min_d_spacing * 1000) / 1000
                 th_reflections = get_reflections(structure, min_d_spacing)
 
                 exp_reflections = np.array(exp_reflections, dtype=object)
