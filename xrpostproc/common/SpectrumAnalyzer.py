@@ -187,15 +187,16 @@ class SpectrumAnalyzer(object):
                         if values == ['0', '0', '0', '0.00', '0.00']:
                             break
 
-                        hkl = (int(values[0]), int(values[1]), int(values[2]))
                         i_hkl = float(values[3])
-                        sigma_hkl = float(values[4])
+                        if i_hkl > 0:
+                            hkl = (int(values[0]), int(values[1]), int(values[2]))
+                            sigma_hkl = float(values[4])
 
-                        d_spacing = structure.lattice.d_hkl(list(hkl))
-                        if d_spacing < min_d_spacing:
-                            min_d_spacing = d_spacing
+                            d_spacing = structure.lattice.d_hkl(list(hkl))
+                            if d_spacing < min_d_spacing:
+                                min_d_spacing = d_spacing
 
-                        exp_reflections.append([i_hkl, hkl, sigma_hkl])
+                            exp_reflections.append([i_hkl, hkl, sigma_hkl])
 
                 min_d_spacing = np.floor(min_d_spacing * 1000) / 1000
                 th_reflections = get_reflections(structure, min_d_spacing)
