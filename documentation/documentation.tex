@@ -94,10 +94,9 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \end{description}
 \textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
-\section{xr\_screening.py}
+\section{powder\_xrd\_screening.py}
 It performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. For the theory behind this script, see appendix \ref{sec:spectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
 \begin{enumerate}
-	\item the importance coefficients $f(h_i)$ used in the computation of F
 	\item the experimental pressure
 	\item the pressure of the USPEX run
 	\item the start and end angles for the computation of theoretical spectra
@@ -188,7 +187,7 @@ Then tune the \texttt{relax\_new\_pressure.py} file with the desired new pressur
 \section{Spectra comparison}
 \label{sec:spectracomp}
 
-We developed a code which computes, from the experimental spectrum and the USPEX output, the degree of agreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
+We developed a code which computes, from the experimental spectrum and the USPEX output, the degree of disagreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
 
 Since we have a pressure difference, we first translate each calculated structure to the experimental pressure by using the Birch-Murnaghan equation
 \begin{equation*}
@@ -206,26 +205,13 @@ Then we define the following scaling factor
 \end{equation*}
 that will be used to rescale the lattice parameters of all the calculated structures.
 
-After this rescaling, the relaxed structures are symmetrized with a tolerance of $0.2$ and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value $100$). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
+After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \AA{} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value 100). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
 
 The fitness between a calculated XRD spectrum and the experimental spectrum is defined by the following fitness function
-\begin{align*}
-	F = &\sum_{i, j}^{match} \frac{(x_i^{exp} - x_j^{th})^2}{\Delta \alpha^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(x_i^{exp})^2}{\Delta \alpha^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(x_i^{th})^2}{\Delta \alpha^2} f(h_i^{th}) \\
-	&\sum_{i, j}^{match} \frac{(h_i^{exp} - h_j^{th})^2}{100^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(h_i^{exp})^2}{100^2} f(h_i^{exp}) + \sum_i^{rest} \frac{(h_i^{th})^2}{100^2} f(h_i^{th})
-\end{align*}
-where the $x_i$ are diffraction angles, the $h_i$ are intensities, $\Delta \alpha$ is the total width of the spectra and $f(h_i)$ is an importance coefficient given by the following piecewise-defined function
 \begin{equation*}
-	f(t)=
-	\begin{cases}
-		5 & \text{if $t > 90$} \\
-		1 & \text{if $50 < t \le 90$} \\
-		0.25 & \text{if $10 < t \le 50$} \\
-		0.02 & \text{if $1 < t \le 10$} \\
-		0 & \text{if $t \le 1$}
-	\end{cases}
+	F = \sum_{i, j}^{match} \left( \frac{h_i^{exp} - h_j^{th}}{100} \right)^2 \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{exp \, rest} \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{th \, rest} \left( \frac{h_i^{th}}{100} \right)^2
 \end{equation*}
-
-The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the two peaks are close to each other. At the denominator we find the total width $\Delta \alpha$ of the spectra, which is the maximum value for an angle and it allows us to get dimensionless addends. The importance coefficient just tells us that higher peaks will give a more significant contribution to the fitness than smaller peaks, and that peaks with intensity less than $1$ will give no contribution. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. It has a similar fashion to the first term, but its addends will have a much higher value since there is no subtraction at the numerator. The third term, analogously, is a sum over the \emph{theoretical rest}. The remaining three terms are very similar to the first three, but angles are substituted by intensities.
+where the $h_i$ are diffraction intensities. The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the intensities of the two matched peaks are close to each other. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. It has a similar fashion to the first term, but here there is no subtraction at the numerator. The third term, analogously, is a sum over the \emph{theoretical rest}.
 
 It is clear that a low value of F gives a good agreement between calculated and experimental spectra, allowing a quick identification of promising candidates in the USPEX output.
 
