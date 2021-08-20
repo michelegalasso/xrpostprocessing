@@ -39,7 +39,11 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
 
     plt.rcParams.update({'font.size': 22})
     plt.figure(figsize=(16, 9))
-    plt.plot(exp_angles, exp_intensities, label='experimental')
+    if len(exp_angles) > 50:
+        plt.plot(exp_angles, exp_intensities, label='experimental')
+    else:
+        plt.stem(exp_angles, exp_intensities, 'b', markerfmt='None', basefmt='None', use_line_collection=True,
+                 label='experimental')
     plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
              label='{} predicted'.format(ID))
     plt.xlabel('2θ')
