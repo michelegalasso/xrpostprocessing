@@ -16,41 +16,44 @@ from xrpostproc.common.plot_against_experiment import plot_against_experiment
 plt.rcParams.update({'font.size': 22})
 
 # input parameters
-wavelength = 1.5406
-spectrum_file = 'subtracted_KTaWO6_4GPa.txt'
-goodStructures = 'goodStructures_4gpa'
-goodStructures_POSCARS = 'goodStructures_POSCARS_4gpa'
-output_folder_name = 'pareto_fronts_4gpa'
-output_picture_name = 'pareto_4gpa.png'
+wavelength = 0.6199
+work_dir = 'Sr4H36'
+spectrum_file = 'spectrum.txt'
+goodStructures = 'goodStructures'
+goodStructures_POSCARS = 'goodStructures_POSCARS'
 
-poscars_iterator = iterator_poscar_file(goodStructures_POSCARS)
+poscars_iterator = iterator_poscar_file(os.path.join(work_dir, goodStructures_POSCARS))
 
 # in this folder I will save the produced pictures
-os.mkdir(output_folder_name)
+os.mkdir(os.path.join(work_dir, 'pareto_fronts'))
 
 p_frontsX, p_frontsY = [[]], [[]]
-with open(goodStructures, 'r') as f:
+with open(os.path.join(work_dir, goodStructures), 'r') as f:
     for line in f:
         values = [value.strip() for value in line.split(('|'))]
-        if (len(values) > 1) and (values[1] != 'ID'):
-            ID = 'EA' + values[1]
-            rank = int(values[2])
-            enthalpy = float(values[5])
-            xraydistance = float(values[6])
-
-            if len(p_frontsX) < rank + 1:
-                p_frontsX.append([])
-                p_frontsY.append([])
-            p_frontsY[rank].append(enthalpy)
-            p_frontsX[rank].append(xraydistance)
-
-            poscar_string = next(poscars_iterator)
-            if ID == poscar_string.split()[0]:
-                if rank < 3:
-                    plot_against_experiment(poscar_string, spectrum_file, wavelength, output_folder_name, rank + 1,
-                                            xraydistance, enthalpy)
+        if (len(values) > 1):
+            if (values[1] == 'ID'):
+                xrd_index = values.index('xraydistance')
             else:
-                raise ValueError('Structure IDs in the two input files do not match.')
+                ID = 'EA' + values[1]
+                rank = int(values[2])
+                enthalpy = float(values[5])
+                xraydistance = float(values[xrd_index])
+
+                if len(p_frontsX) < rank + 1:
+                    p_frontsX.append([])
+                    p_frontsY.append([])
+                p_frontsY[rank].append(enthalpy)
+                p_frontsX[rank].append(xraydistance)
+
+                poscar_string = next(poscars_iterator)
+                if ID == poscar_string.split()[0]:
+                    if rank < 3:
+                        plot_against_experiment(poscar_string, os.path.join(work_dir, spectrum_file), wavelength,
+                                                os.path.join(work_dir, 'pareto_fronts'), rank + 1,
+                                                xraydistance, enthalpy)
+                else:
+                    raise ValueError('Structure IDs in the two input files do not match.')
 
 plt.figure(figsize=(16, 9))
 ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1)*(n % 10 < 4) * n % 10::4])
@@ -73,9 +76,9 @@ plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy (eV/f.u.)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
 # plt.xlim(0.132, 0.155)
-# plt.ylim(-0.1, 1.8)
+# plt.ylim(-10, 10)
 plt.legend()
 
 # plt.show()
-plt.savefig(output_picture_name)
+plt.savefig(os.path.join(work_dir, 'pareto.png'))
 plt.close()

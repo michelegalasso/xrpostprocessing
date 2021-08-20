@@ -48,7 +48,7 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
 
     # plt.show()
     if (folder_name is not None) and (front is not None) and (xraydistance is not None) and (enthalpy is not None):
-        plt.savefig('{}/{}_{:6.3f}_{:6.3f}_{}.png'.format(folder_name, front, xraydistance, enthalpy, ID))
+        plt.savefig('{}/{}_{:.3f}_{:.3f}_{}.png'.format(folder_name, front, xraydistance, enthalpy, ID))
     else:
         plt.savefig('{}.png'.format(ID))
     plt.close()
