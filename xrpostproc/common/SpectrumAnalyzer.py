@@ -21,8 +21,8 @@ from .read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
-    def __init__(self, exp_pressure: int, th_pressure: int, extended_convex_hull: str,
-                 extended_convex_hull_POSCARS: str, spectrum_file: str = None,
+    def __init__(self, exp_pressure: int = None, th_pressure: int = None, extended_convex_hull: str = None,
+                 extended_convex_hull_POSCARS: str = None, spectrum_file: str = None,
                  spectrum_starts: float = None, spectrum_ends: float = None,
                  wavelength: float = None, sigma: float = None, hkl_file: str = None):
         """
@@ -43,10 +43,10 @@ class SpectrumAnalyzer(object):
         self.exp_pressure = exp_pressure
         self.th_pressure = th_pressure
         self.deltaP = exp_pressure - th_pressure
-        self.extended_convex_hull = extended_convex_hull
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
         if spectrum_file is not None:
+            self.extended_convex_hull = extended_convex_hull
             self.spectrum_file = spectrum_file
             self.spectrum_starts = spectrum_starts
             self.spectrum_ends = spectrum_ends
@@ -158,11 +158,8 @@ class SpectrumAnalyzer(object):
 
                 plt.plot(x, y_exp, label='experimental')
 
-                y_th = np.zeros_like(x)
-                for angle, intensity in zip(th_angles, th_intensities):
-                    y_th += intensity * np.exp(-((x - angle) ** 2) / (2 * self.sigma ** 2))
-
-                plt.plot(x, y_th, label='calculated')
+                plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
+                         label='{} predicted'.format(ID))
 
                 plt.legend()
                 plt.savefig(os.path.join('results', filename + '.png'))
@@ -174,7 +171,7 @@ class SpectrumAnalyzer(object):
             for poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
                 ID = poscar_string.split()[0]
                 structure = Structure.from_str(poscar_string, fmt='poscar')
-                # structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
+                structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
                 # read hkl file
                 exp_reflections = []

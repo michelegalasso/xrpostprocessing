@@ -33,17 +33,23 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
     structure = Structure.from_str(string, fmt='cif')
 
     calculator = XRDCalculator(wavelength)
-    th_spectrum = calculator.get_pattern(structure, two_theta_range=(min(exp_angles), max(exp_angles)))
+    th_spectrum = calculator.get_pattern(structure, two_theta_range=(min(exp_angles) - 1, max(exp_angles) + 1))
     th_angles = th_spectrum.x
     th_intensities = th_spectrum.y
 
     plt.rcParams.update({'font.size': 22})
     plt.figure(figsize=(16, 9))
+
     if len(exp_angles) > 50:
         plt.plot(exp_angles, exp_intensities, label='experimental')
     else:
-        plt.stem(exp_angles, exp_intensities, 'b', markerfmt='None', basefmt='None', use_line_collection=True,
-                 label='experimental')
+        sigma = 0.01
+        x = np.arange(min(exp_angles) - 1, max(exp_angles) + 1, 0.01)
+        y_exp = np.zeros_like(x)
+        for angle, intensity in zip(exp_angles, exp_intensities):
+            y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * sigma ** 2))
+        plt.plot(x, y_exp, label='experimental')
+
     plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
              label='{} predicted'.format(ID))
     plt.xlabel('2θ')

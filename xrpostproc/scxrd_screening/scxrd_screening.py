@@ -13,10 +13,9 @@ from xrpostproc.common.SpectrumAnalyzer import SpectrumAnalyzer
 exp_pressure = 0        # pressure of the experimental powder
 th_pressure = 0         # pressure of the USPEX calculation
 
-extended_convex_hull = 'DOESNOTEXIST.txt'           # name of the extended_convex_hull file
 extended_convex_hull_POSCARS = 'gatheredPOSCARS'    # name of the gatheredPOSCARS file
 hkl_file = 'test_P1.hkl'                            # name of the experimental hkl file
 
-analyzer = SpectrumAnalyzer(exp_pressure, th_pressure, extended_convex_hull, extended_convex_hull_POSCARS,
-                            hkl_file=hkl_file)
+analyzer = SpectrumAnalyzer(exp_pressure=exp_pressure, th_pressure=th_pressure,
+                            extended_convex_hull_POSCARS=extended_convex_hull_POSCARS, hkl_file=hkl_file)
 analyzer.run()
