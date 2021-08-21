@@ -19,16 +19,14 @@ plt.rcParams.update({'font.size': 22})
 wavelength = 0.6199
 work_dir = 'Sr4H36'
 spectrum_file = 'spectrum.txt'
-goodStructures = 'goodStructures'
-goodStructures_POSCARS = 'goodStructures_POSCARS'
 
-poscars_iterator = iterator_poscar_file(os.path.join(work_dir, goodStructures_POSCARS))
+poscars_iterator = iterator_poscar_file(os.path.join(work_dir, 'goodStructures_POSCARS'))
 
 # in this folder I will save the produced pictures
 os.mkdir(os.path.join(work_dir, 'pareto_fronts'))
 
 p_frontsX, p_frontsY = [[]], [[]]
-with open(os.path.join(work_dir, goodStructures), 'r') as f:
+with open(os.path.join(work_dir, 'goodStructures'), 'r') as f:
     for line in f:
         values = [value.strip() for value in line.split(('|'))]
         if (len(values) > 1):

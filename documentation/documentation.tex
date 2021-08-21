@@ -181,6 +181,36 @@ It allows an accurate translation of the structures contained in many CIF files 
 \end{enumerate}
 Then tune the \texttt{relax\_new\_pressure.py} file with the desired new pressure and the appropriate VASP parameters for your calculation and run the python script on a computing node. By default, VASP relaxations are performed sequentially and every relaxation takes 4 computing cores. For more details about the implementation, have a look at the \href{https://wiki.fysik.dtu.dk/ase/ase/calculators/vasp.html}{ASE VASP calculator}.
 
+\section{pareto\_picture.py}
+
+This script organizes and visualizes the results of a USPEX calculation in which multi-objective optimization of stability together with the agreement with an experimental powder XRD spectrum has been optimized. Lines 19-21 of the script contain the input parameters, which need to be tuned by the user:
+\begin{enumerate}
+	\item  the wavelength of the incident radiation in \SI{}{\angstrom}
+	\item the name of the working directory, which must contain the files \texttt{goodStr\-uctures} and \texttt{goodStructures\_POSCARS} from the USPEX output, as well as the spectrum file
+	\item the name of the spectrum file
+\end{enumerate}
+The output of the script is constituted by a picture, named \texttt{pareto.png}, displaying each structure on a plane where stability lies on the Y axis and the disagreement with the given spectrum lies on the X axis (see Fig. \ref{fig:pfronts}). On the picture, the first three Pareto fronts are shown. It is possible to focus on a specific area of the graph by specifying the intervals to display on the X and Y axes at lines 76-77 and by rerunning the script. In addition, the scripts creates a folder named \texttt{pareto\_fronts} which contains, for each structure on the first three Pareto fronts, a structure file in the POSCAR format and a picture which visually compares the predicted powder XRD spectrum of the structure with the given spectrum contained in the spectrum file, as in Fig. \ref{fig:comparison}.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{pareto.png}
+	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
+	\label{fig:pfronts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{1_0.210_0.000_EA2692.png}
+	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
+	\label{fig:comparison}
+\end{figure}
+The name of these files have the format \texttt{rank\_F\_enthalpy\_ID}, where:
+\begin{description}
+	\item[rank] is the progressive number of the Pareto front
+	\item[F] is the agreement F between simulated and given spectra
+	\item[enthalpy] is the enthalpy of the structure
+	\item[ID] is the structure ID from the USPEX run
+\end{description}
+\textbf{Example}: \texttt{python pareto\_picture.py}
+
 \appendix
 \appendixpage
 
@@ -205,7 +235,7 @@ Then we define the following scaling factor
 \end{equation*}
 that will be used to rescale the lattice parameters of all the calculated structures.
 
-After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \AA{} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value 100). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
+After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value 100). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
 
 The fitness between a calculated XRD spectrum and the experimental spectrum is defined by the following fitness function
 \begin{equation*}
