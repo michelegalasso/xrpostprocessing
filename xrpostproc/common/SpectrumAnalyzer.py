@@ -40,12 +40,12 @@ class SpectrumAnalyzer(object):
             sigma:
             hkl_file:
         """
-        self.exp_pressure = exp_pressure
-        self.th_pressure = th_pressure
-        self.deltaP = exp_pressure - th_pressure
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
         if spectrum_file is not None:
+            self.exp_pressure = exp_pressure
+            self.th_pressure = th_pressure
+            self.deltaP = exp_pressure - th_pressure
             self.extended_convex_hull = extended_convex_hull
             self.spectrum_file = spectrum_file
             self.spectrum_starts = spectrum_starts
@@ -78,13 +78,13 @@ class SpectrumAnalyzer(object):
         """
         print('Processing structures..')
 
-        # pressure correction
-        k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
-
         if self.mode == 'powder':
             os.mkdir('results')
             if match_tol is None:
                 raise ValueError('Powder mode requires parameter match_tol.')
+
+            # pressure correction
+            k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
 
             spectrum = np.loadtxt(self.spectrum_file)
             exp_angles = spectrum[:, 0]
@@ -171,7 +171,6 @@ class SpectrumAnalyzer(object):
             for poscar_string in iterator_poscar_file(self.extended_convex_hull_POSCARS):
                 ID = poscar_string.split()[0]
                 structure = Structure.from_str(poscar_string, fmt='poscar')
-                structure.lattice = Lattice(np.diag([k, k, k]) @ structure.lattice.matrix)
 
                 # read hkl file
                 exp_reflections = []

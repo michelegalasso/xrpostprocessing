@@ -95,7 +95,7 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
 \section{powder\_xrd\_screening.py}
-It performs a screening of USPEX results, looking for the structures that best match an experimental X-ray spectrum. For the theory behind this script, see appendix \ref{sec:spectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
+It performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
 \begin{enumerate}
 	\item the experimental pressure
 	\item the pressure of the USPEX run
@@ -221,13 +221,25 @@ This simple script is used to obtain a plot of the predicted powder XRD spectrum
 \end{enumerate}
 \textbf{Example}: \texttt{python single\_plot.py}
 
+\section{scxrd\_screening}
+
+This script performs a screening of USPEX results, looking for the structures that best match an experimental single crystal X-ray spectrum. The fitness function for evaluating the agreement between theoretical and experimental spectra is the weighted R-factor (see appendix \ref{sec:scspectracomp}). Notice that the USPEX run must have been performed at fixed cell parameters. The script contains the following input parameters:
+\begin{enumerate}
+	\item the name of the \texttt{gatheredPOSCARS} file from the USPEX run
+	\item the name of the HKL file containing experimental reflections
+\end{enumerate}
+The script outputs a file \texttt{results.txt} which contains a list of ordered structure IDs with their relative weighted R-factor, from the most fit to the least fit.
+
+\vspace{0.2cm}
+\noindent \textbf{Example}: \texttt{python scxrd\_screening.py}
+
 \appendix
 \appendixpage
 
-\section{Spectra comparison}
-\label{sec:spectracomp}
+\section{Powder spectra comparison}
+\label{sec:powderspectracomp}
 
-We developed a code which computes, from the experimental spectrum and the USPEX output, the degree of disagreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
+We developed a code which computes, from the experimental powder XRD spectrum and the USPEX output, the degree of disagreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
 
 Since we have a pressure difference, we first translate each calculated structure to the experimental pressure by using the Birch-Murnaghan equation
 \begin{equation*}
@@ -243,16 +255,21 @@ Then we define the following scaling factor
 \begin{equation*}
 	k = \sqrt[3]{\frac{300}{150 + \sqrt{22500 + 300 \Delta P}}}
 \end{equation*}
-that will be used to rescale the lattice parameters of all the calculated structures.
+that will be used to rescale the lattice parameters of all the calculated structures. After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks.
 
-After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks. For each peak we know the diffraction angle and the relative intensity (while the intensity of the highest peak in each spectrum has been conventionally given the value 100). We define a \emph{match} between a theoretical and an experimental peak if the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities.
-
-The fitness between a calculated XRD spectrum and the experimental spectrum is defined by the following fitness function
+In the case of powder XRD spectra, for each peak we know the diffraction angle and the relative intensity, while the intensity of the highest peak in each spectrum has been conventionally given the value 100. We define a \emph{match} between a theoretical and an experimental peak the case when the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities. The fitness between a calculated powder XRD spectrum and the experimental spectrum is defined by the following fitness function
 \begin{equation*}
 	F = \sum_{i, j}^{match} \left( \frac{h_i^{exp} - h_j^{th}}{100} \right)^2 \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{exp \, rest} \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{th \, rest} \left( \frac{h_i^{th}}{100} \right)^2
 \end{equation*}
-where the $h_i$ are diffraction intensities. The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the intensities of the two matched peaks are close to each other. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. It has a similar fashion to the first term, but here there is no subtraction at the numerator. The third term, analogously, is a sum over the \emph{theoretical rest}.
+where the $h_i$ are diffraction intensities. The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the intensities of the two matched peaks are close to each other. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. The third term, analogously, is a sum over the \emph{theoretical rest}. It is clear that a low value of F gives a good agreement between calculated and experimental powder XRD spectra, allowing a quick identification of promising candidates in the USPEX output.
 
-It is clear that a low value of F gives a good agreement between calculated and experimental spectra, allowing a quick identification of promising candidates in the USPEX output.
+\section{Single crystal spectra comparison}
+\label{sec:scspectracomp}
+
+In the case of single crystal XRD spectra, for each reflection we know the Miller indices $(h, k, l)$, its intensity $I$ and its uncertainty of measure $\sigma$. As fitness we use the weighted R-factor, given by
+\[
+	wR = \sqrt{\frac{\sum \frac{1}{\sigma^2} (I_{exp} - I_{th})^2}{\sum \frac{1}{\sigma^2} I_{exp}^2}}
+\]
+where the sums run over all the experimental reflections and theoretical reflections at the same Miller indices $(h, k, l)$. If an experimental reflection is not matched by any theoretical reflection an error is returned, while in the opposite case the unmatched theoretical reflection is simply ignored.
 
 \end{document}

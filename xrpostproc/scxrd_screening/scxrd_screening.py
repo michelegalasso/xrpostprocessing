@@ -10,12 +10,8 @@ from xrpostproc.common.SpectrumAnalyzer import SpectrumAnalyzer
 
 
 # input parameters (MgSiO3)
-exp_pressure = 0        # pressure of the experimental powder
-th_pressure = 0         # pressure of the USPEX calculation
-
-extended_convex_hull_POSCARS = 'gatheredPOSCARS'    # name of the gatheredPOSCARS file
+gatheredPOSCARS = 'gatheredPOSCARS'                 # name of the gatheredPOSCARS file
 hkl_file = 'test_P1.hkl'                            # name of the experimental hkl file
 
-analyzer = SpectrumAnalyzer(exp_pressure=exp_pressure, th_pressure=th_pressure,
-                            extended_convex_hull_POSCARS=extended_convex_hull_POSCARS, hkl_file=hkl_file)
+analyzer = SpectrumAnalyzer(extended_convex_hull_POSCARS=gatheredPOSCARS, hkl_file=hkl_file)
 analyzer.run()
