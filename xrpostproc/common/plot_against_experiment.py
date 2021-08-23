@@ -20,7 +20,7 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
 
     # save poscar file
     if (folder_name is not None) and (front is not None) and (xraydistance is not None) and (enthalpy is not None):
-        with open('{}/{}_{:6.3f}_{:6.3f}_{}.vasp'.format(folder_name, front, xraydistance, enthalpy, ID), 'w') as f:
+        with open('{}/{}_{:.3f}_{:.3f}_{}.vasp'.format(folder_name, front, xraydistance, enthalpy, ID), 'w') as f:
             f.write(poscar_string)
 
     # load experimental spectrum
