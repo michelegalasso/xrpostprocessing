@@ -16,9 +16,9 @@ from xrpostproc.common.plot_against_experiment import plot_against_experiment
 plt.rcParams.update({'font.size': 22})
 
 # input parameters
-wavelength = 0.6199
-work_dir = 'Sr2H12'
-spectrum_file = 'spectrum.txt'
+wavelength = 1.5406
+work_dir = 'KTaWO6_0gpa'
+spectrum_file = 'subtracted_KTaWO6_0GPa.txt'
 
 poscars_iterator = iterator_poscar_file(os.path.join(work_dir, 'goodStructures_POSCARS'))
 
@@ -73,8 +73,8 @@ for i, (frontX, frontY) in enumerate(zip(p_frontsX, p_frontsY)):
 plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy (eV/f.u.)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
-plt.xlim(-0.2, 5)
-plt.ylim(2.5, 8)
+# plt.xlim(-0.2, 5)
+# plt.ylim(2.5, 8)
 plt.legend(loc='upper right', framealpha=1)
 
 # plt.show()
