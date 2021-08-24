@@ -17,7 +17,7 @@ plt.rcParams.update({'font.size': 22})
 
 # input parameters
 wavelength = 0.6199
-work_dir = 'Sr4H36'
+work_dir = 'Sr2H12'
 spectrum_file = 'spectrum.txt'
 
 poscars_iterator = iterator_poscar_file(os.path.join(work_dir, 'goodStructures_POSCARS'))
@@ -73,9 +73,9 @@ for i, (frontX, frontY) in enumerate(zip(p_frontsX, p_frontsY)):
 plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy (eV/f.u.)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
-# plt.xlim(0.132, 0.155)
-# plt.ylim(-10, 10)
-plt.legend()
+plt.xlim(-0.2, 5)
+plt.ylim(2.5, 8)
+plt.legend(loc='upper right', framealpha=1)
 
 # plt.show()
 plt.savefig(os.path.join(work_dir, 'pareto.png'))
