@@ -5,9 +5,9 @@ The instructions for using each script are in the file `documentation/documentat
 
 # First use
 I suppose that you have Python 3 installed in your system, and that it is accessible through the command `python`.
-1.  Unzip the project folder `xrpostprocessing-master`
+1.  Clone the repository on your machine
 2.  Add permanently the full path of the project folder to your `PYTHONPATH` environment variable
-3.  `cd xrpostprocessing-master`
+3.  `cd xrpostprocessing`
 4.  `python -m venv .venv`
 5.  `.venv\Scripts\activate` or for Linux just use `source .venv/bin/activate`
 6.  `pip install -r requirements.txt`
