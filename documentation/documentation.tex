@@ -20,9 +20,9 @@
 %\end{abstract}
 
 \section{Introduction}
-In the following sections I present a series of Python scripts, used to postprocess the results of USPEX calculations when working with experimental X-ray diffraction data. The core of this collection of scripts is constituted by the scripts \texttt{powder\_xrd\_screening.py} and \texttt{scxrd\_screening.py}, which allow the user to quickly sort a number of structures read from the USPEX output according to their degree of agreement with experimental X-ray data. The first script works with powder XRD data, while the second script works with single crystal XRD data. The theory beyond the functioning of these two scripts is illustrated in appendices \ref{sec:powderspectracomp} and \ref{sec:scspectracomp}.
+In this document I present a series of Python scripts, used to postprocess the results of USPEX calculations when working with experimental X-ray diffraction data. The core of this collection of scripts is constituted by the scripts \texttt{powder\_xrd\_screening.py} and \texttt{scxrd\_screening.py}, which allow the user to quickly sort a number of structures read from the USPEX output according to their degree of agreement with experimental X-ray data. The first script works with powder XRD data, while the second script works with single crystal XRD data. The theory beyond the functioning of these two scripts is illustrated in appendices \ref{sec:powderspectracomp} and \ref{sec:scspectracomp}.
 
-The first 5 scripts take in input some files written by USPEX, while the remaining scripts work with structural information contained in CIF or POSCAR files. All script take in input some information about the experimental X-ray data as well. At the time of writing this document, the collection of scripts has been tested on the following Python versions: 3.6, 3.7, 3.8.
+The first 5 scripts take in input a number of files written by USPEX, while the remaining scripts work with structural information contained in CIF or POSCAR files. All script take in input some information about the experimental X-ray data as well. At the time of writing this document, the collection of scripts has been tested on the following Python versions: 3.6, 3.7, 3.8.
 
 \section{powder\_xrd\_screening.py}
 The script performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
@@ -36,13 +36,16 @@ The script performs a screening of USPEX results, looking for the structures tha
 	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
 	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
 	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
+	\item the approximate bulk modulus $B_0$ of the material
+	\item the derivative of the bulk modulus with respect to pressure $B'_0$
 \end{enumerate}
 The script performs the following operations:
 \begin{enumerate}
 	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
+	\item it adjusts the cell parameters to the experimetal pressure using a second order Taylor expansion of the Birch-Murnaghan equation of state
 	\item it computes the theoretical X-ray spectrum
 	\item it computes the agreement F between the spectra
-	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2)
+	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2~\AA)
 	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
 \end{enumerate}
 The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
@@ -52,7 +55,7 @@ The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacf
 	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure
 	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
+	\item[symmetry] is the space group number, determined with a tolerance of 0.2~\AA
 \end{description}
 \textbf{Example}: \texttt{python powder\_xrd\_screening.py}
 
@@ -87,7 +90,8 @@ The name of each CIF file has the format \texttt{i}\_\texttt{ID}\_\texttt{fitnes
 	\item[enthalpy] is the \emph{enthalpy} of the structure
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure
 	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with tolerance $0.2$\end{description}
+	\item[symmetry] is the space group number, determined with tolerance 0.2~\AA
+\end{description}
 \textbf{Example}: \texttt{python split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
 \section{sublattice\_split\_CIFs.py}
@@ -112,7 +116,7 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 	\item[enthalpy] is the \emph{enthalpy} of the structure
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure, with hydrogens
 	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$ and without hydrogens
+	\item[symmetry] is the space group number, determined with a tolerance of 0.2~\AA{} and without hydrogens
 \end{description}
 \textbf{Example}: \texttt{python sublattice\_split\_CIFs.py extended\_convex\_hull \\ extended\_convex\_hull\_POSCARS 50GPa}
 
@@ -137,7 +141,7 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 	\item[enthalpy] is the \emph{enthalpy} of the structure
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure
 	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
+	\item[symmetry] is the space group number, determined with a tolerance of 0.2~\AA
 \end{description}
 \textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
@@ -237,6 +241,7 @@ This simple script is used to obtain a plot of the predicted powder XRD spectrum
 \vspace{0.2cm}
 \noindent \textbf{Example}: \texttt{python scxrd\_screening.py}
 
+\newpage
 \appendix
 \appendixpage
 
@@ -249,15 +254,15 @@ Since we have a pressure difference, we first translate each calculated structur
 \begin{equation*}
 	\Delta P = \frac{3 B_0}{2} \left[ \left( \frac{V_0}{V} \right)^{\frac{7}{3}} - \left( \frac{V_0}{V} \right)^{\frac{5}{3}} \right] \left\{ 1 + \frac{3}{4} \left( B'_0 - 4 \right) \left[ \left( \frac{V_0}{V} \right)^{\frac{2}{3}} - 1 \right] \right\}
 \end{equation*}
-where $\Delta P$ is the pressure difference, $V_0$ is the volume of the unit cell at the calculated pressure, $V$ is the volume at the experimental pressure, $B_0$ is the bulk modulus and $B'_0$ is the derivative of the bulk modulus with respect to pressure. For $B_0$ and $B'_0$ we take the average values $B_0 = 300$ and $B'_0 = 3$. 
+where $\Delta P$ is the pressure difference, $V_0$ is the volume of the unit cell at the calculated pressure, $V$ is the volume at the experimental pressure, $B_0$ is the bulk modulus and $B'_0$ is the derivative of the bulk modulus with respect to pressure. The parameters $B_0$ and $B'_0$ are user-defined and, if not explicitly specified, they default to the average values $B_0 = 300$ and $B'_0 = 3$. 
 
-Assuming that, for small pressure variations, also $V_0/V$ will be small, we approximate the Birch-Murnaghan equation to a second order Taylor expansion in $V_0/V$ and we get the volume $V$ at the experimental pressure:
+Assuming that, for small pressure variations, $V_0/V$ will be close to 1, we approximate the Birch-Murnaghan equation to a second order Taylor expansion in $V_0/V$ and we get the volume $V$ at the experimental pressure:
 \begin{equation*}
-	V = \frac{300}{150 + \sqrt{22500 + 300 \Delta P}} V_0
+	V = \frac{B_0 (B'_0 - 1)}{B_0 (B'_0 - 2) + \sqrt{B_0^2 + 2 B_0 (B'_0 - 1) \Delta P}} V_0
 \end{equation*}
 Then we define the following scaling factor
 \begin{equation*}
-	k = \sqrt[3]{\frac{300}{150 + \sqrt{22500 + 300 \Delta P}}}
+	k = \sqrt[3]{\frac{B_0 (B'_0 - 1)}{B_0 (B'_0 - 2) + \sqrt{B_0^2 + 2 B_0 (B'_0 - 1) \Delta P}}}
 \end{equation*}
 that will be used to rescale the lattice parameters of all the calculated structures. After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks.
 
