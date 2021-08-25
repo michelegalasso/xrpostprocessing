@@ -19,6 +19,53 @@
 %The abstract text goes here.
 %\end{abstract}
 
+\section{Introduction}
+In the following sections I present a series of Python scripts, used to postprocess the results of USPEX calculations when working with experimental X-ray diffraction data. The core of this collection of scripts is constituted by the scripts \texttt{powder\_xrd\_screening.py} and \texttt{scxrd\_screening.py}, which allow the user to quickly sort a number of structures read from the USPEX output according to their degree of agreement with experimental X-ray data. The first script works with powder XRD data, while the second script works with single crystal XRD data. The theory beyond the functioning of these two scripts is illustrated in appendices \ref{sec:powderspectracomp} and \ref{sec:scspectracomp}.
+
+The first 5 scripts take in input some files written by USPEX, while the remaining scripts work with structural information contained in CIF or POSCAR files. All script take in input some information about the experimental X-ray data as well. At the time of writing this document, the collection of scripts has been tested on the following Python versions: 3.6, 3.7, 3.8.
+
+\section{powder\_xrd\_screening.py}
+The script performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
+\begin{enumerate}
+	\item the experimental pressure
+	\item the pressure of the USPEX run
+	\item the start and end angles for the computation of theoretical spectra
+	\item the experimental wavelength
+	\item the value of $\sigma$ for the Gaussian smearing of peaks, used for generating output pictures
+	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental spectrum
+	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
+	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
+	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
+\end{enumerate}
+The script performs the following operations:
+\begin{enumerate}
+	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
+	\item it computes the theoretical X-ray spectrum
+	\item it computes the agreement F between the spectra
+	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2)
+	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
+\end{enumerate}
+The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
+\begin{description}
+	\item[F] is the agreement F between theoretical and experimental spectra
+	\item[ID] is the structure ID from the USPEX run
+	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
+	\item[iupacformula] is the \emph{IUPAC formula} of the structure
+	\item[pressure] is the pressure used for the USPEX run
+	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
+\end{description}
+\textbf{Example}: \texttt{python powder\_xrd\_screening.py}
+
+\section{scxrd\_screening.py}
+This script performs a screening of USPEX results, looking for the structures that best match an experimental single crystal X-ray spectrum. The fitness function for evaluating the agreement between theoretical and experimental spectra is the weighted R-factor (see appendix \ref{sec:scspectracomp}). Notice that the USPEX run must have been performed at fixed cell parameters. The script contains the following input parameters:
+\begin{enumerate}
+	\item the name of the \texttt{gatheredPOSCARS} file from the USPEX run
+	\item the name of the HKL file containing experimental reflections
+\end{enumerate}
+The script outputs a file \texttt{results.txt} which contains a list of ordered structure IDs with their relative weighted R-factor, from the most fit to the least fit.
+
+\noindent \textbf{Example}: \texttt{python scxrd\_screening.py}
+
 \section{split\_CIFs.py}
 It splits the structures with lowest enthalpy of a variable composition USPEX run into multiple CIF files. The script takes the following arguments from command line:
 \begin{enumerate}
@@ -94,37 +141,34 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \end{description}
 \textbf{Example}: \texttt{python fixcomp\_split\_CIFs.py Individuals gatheredPOSCARS 50GPa}
 
-\section{powder\_xrd\_screening.py}
-It performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
+\section{pareto\_picture.py}
+This script organizes and visualizes the results of a USPEX calculation in which multi-objective optimization of stability together with the agreement with an experimental powder XRD spectrum has been optimized. Lines 19-21 of the script contain the input parameters, which need to be tuned by the user:
 \begin{enumerate}
-	\item the experimental pressure
-	\item the pressure of the USPEX run
-	\item the start and end angles for the computation of theoretical spectra
-	\item the experimental wavelength
-	\item the value of $\sigma$ for the gaussian smearing of peaks, used for generating output pictures
-	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental spectrum
-	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
-	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
-	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
+	\item  the wavelength of the incident radiation in \SI{}{\angstrom}
+	\item the name of the working directory, which must contain the files \texttt{goodStr\-uctures} and \texttt{goodStructures\_POSCARS} from the USPEX output, as well as the spectrum file
+	\item the name of the spectrum file
 \end{enumerate}
-The script performs the following operations:
-\begin{enumerate}
-	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
-	\item it computes the theoretical X-ray spectrum
-	\item it computes the agreement F between the spectra
-	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2)
-	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
-\end{enumerate}
-The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
+The output of the script is constituted by a picture, named \texttt{pareto.png}, displaying each structure on a plane where stability lies on the Y axis and the disagreement with the given spectrum lies on the X axis (see Fig. \ref{fig:pfronts}). On the picture, the first three Pareto fronts are shown. It is possible to focus on a specific area of the graph by specifying the intervals to display on the X and Y axes at lines 76-77 and by rerunning the script. In addition, the scripts creates a folder named \texttt{pareto\_fronts} which contains, for each structure on the first three Pareto fronts, a structure file in the POSCAR format and a picture which visually compares the predicted powder XRD spectrum of the structure with the given spectrum contained in the spectrum file, as in Fig. \ref{fig:comparison}.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{pareto.png}
+	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
+	\label{fig:pfronts}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{1_0.210_0.000_EA2692.png}
+	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
+	\label{fig:comparison}
+\end{figure}
+The name of these files have the format \texttt{rank\_F\_enthalpy\_ID}, where:
 \begin{description}
-	\item[F] is the agreement F between theoretical and experimental spectra
+	\item[rank] is the progressive number of the Pareto front
+	\item[F] is the agreement F between simulated and given spectra
+	\item[enthalpy] is the enthalpy of the structure
 	\item[ID] is the structure ID from the USPEX run
-	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
-	\item[iupacformula] is the \emph{IUPAC formula} of the structure
-	\item[pressure] is the pressure used for the USPEX run
-	\item[symmetry] is the space group number, determined with a tolerance of $0.2$
 \end{description}
-\textbf{Example}: \texttt{python xr\_screening.py}
+\textbf{Example}: \texttt{python pareto\_picture.py}
 
 \section{exclusion.py}
 It allows to quickly filter a multitude of CIF files, by removing those which have significant peaks in a user-defined exclusion region of the X-ray spectrum. The script takes the following arguments from command line:
@@ -181,38 +225,7 @@ It allows an accurate translation of the structures contained in many CIF files 
 \end{enumerate}
 Then tune the \texttt{relax\_new\_pressure.py} file with the desired new pressure and the appropriate VASP parameters for your calculation and run the python script on a computing node. By default, VASP relaxations are performed sequentially and every relaxation takes 4 computing cores. For more details about the implementation, have a look at the \href{https://wiki.fysik.dtu.dk/ase/ase/calculators/vasp.html}{ASE VASP calculator}.
 
-\section{pareto\_picture.py}
-
-This script organizes and visualizes the results of a USPEX calculation in which multi-objective optimization of stability together with the agreement with an experimental powder XRD spectrum has been optimized. Lines 19-21 of the script contain the input parameters, which need to be tuned by the user:
-\begin{enumerate}
-	\item  the wavelength of the incident radiation in \SI{}{\angstrom}
-	\item the name of the working directory, which must contain the files \texttt{goodStr\-uctures} and \texttt{goodStructures\_POSCARS} from the USPEX output, as well as the spectrum file
-	\item the name of the spectrum file
-\end{enumerate}
-The output of the script is constituted by a picture, named \texttt{pareto.png}, displaying each structure on a plane where stability lies on the Y axis and the disagreement with the given spectrum lies on the X axis (see Fig. \ref{fig:pfronts}). On the picture, the first three Pareto fronts are shown. It is possible to focus on a specific area of the graph by specifying the intervals to display on the X and Y axes at lines 76-77 and by rerunning the script. In addition, the scripts creates a folder named \texttt{pareto\_fronts} which contains, for each structure on the first three Pareto fronts, a structure file in the POSCAR format and a picture which visually compares the predicted powder XRD spectrum of the structure with the given spectrum contained in the spectrum file, as in Fig. \ref{fig:comparison}.
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{pareto.png}
-	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
-	\label{fig:pfronts}
-\end{figure}
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{1_0.210_0.000_EA2692.png}
-	\caption{Graph produced by the script \texttt{pareto\_picture.png} from the results of an USPEX run in which stability of the system \ch{K4Ta4W4O24} has been optimized together with the agreement with an experimental powder XRD spectrum.}
-	\label{fig:comparison}
-\end{figure}
-The name of these files have the format \texttt{rank\_F\_enthalpy\_ID}, where:
-\begin{description}
-	\item[rank] is the progressive number of the Pareto front
-	\item[F] is the agreement F between simulated and given spectra
-	\item[enthalpy] is the enthalpy of the structure
-	\item[ID] is the structure ID from the USPEX run
-\end{description}
-\textbf{Example}: \texttt{python pareto\_picture.py}
-
 \section{single\_plot.py}
-
 This simple script is used to obtain a plot of the predicted powder XRD spectrum of a single structure against the experimental spectrum. It takes in input, at lines 12-14, the following three parameters:
 \begin{enumerate}
 	\item the wavelength of the incident radiation in \SI{}{\angstrom}
@@ -220,15 +233,6 @@ This simple script is used to obtain a plot of the predicted powder XRD spectrum
 	\item the name of the file containing the experimental spectrum
 \end{enumerate}
 \textbf{Example}: \texttt{python single\_plot.py}
-
-\section{scxrd\_screening}
-
-This script performs a screening of USPEX results, looking for the structures that best match an experimental single crystal X-ray spectrum. The fitness function for evaluating the agreement between theoretical and experimental spectra is the weighted R-factor (see appendix \ref{sec:scspectracomp}). Notice that the USPEX run must have been performed at fixed cell parameters. The script contains the following input parameters:
-\begin{enumerate}
-	\item the name of the \texttt{gatheredPOSCARS} file from the USPEX run
-	\item the name of the HKL file containing experimental reflections
-\end{enumerate}
-The script outputs a file \texttt{results.txt} which contains a list of ordered structure IDs with their relative weighted R-factor, from the most fit to the least fit.
 
 \vspace{0.2cm}
 \noindent \textbf{Example}: \texttt{python scxrd\_screening.py}
@@ -241,7 +245,7 @@ The script outputs a file \texttt{results.txt} which contains a list of ordered 
 
 We developed a code which computes, from the experimental powder XRD spectrum and the USPEX output, the degree of disagreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
 
-Since we have a pressure difference, we first translate each calculated structure to the experimental pressure by using the Birch-Murnaghan equation
+Since we have a pressure difference, we first translate each calculated structure to the experimental pressure using the Birch-Murnaghan equation
 \begin{equation*}
 	\Delta P = \frac{3 B_0}{2} \left[ \left( \frac{V_0}{V} \right)^{\frac{7}{3}} - \left( \frac{V_0}{V} \right)^{\frac{5}{3}} \right] \left\{ 1 + \frac{3}{4} \left( B'_0 - 4 \right) \left[ \left( \frac{V_0}{V} \right)^{\frac{2}{3}} - 1 \right] \right\}
 \end{equation*}

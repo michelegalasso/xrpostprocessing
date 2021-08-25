@@ -1,13 +1,14 @@
-\BOOKMARK [1][-]{section.1}{split\137CIFs.py}{}% 1
-\BOOKMARK [1][-]{section.2}{sublattice\137split\137CIFs.py}{}% 2
-\BOOKMARK [1][-]{section.3}{fixcomp\137split\137CIFs.py}{}% 3
-\BOOKMARK [1][-]{section.4}{powder\137xrd\137screening.py}{}% 4
-\BOOKMARK [1][-]{section.5}{exclusion.py}{}% 5
-\BOOKMARK [1][-]{section.6}{find\137peak.py}{}% 6
-\BOOKMARK [1][-]{section.7}{change\137pressure.py}{}% 7
-\BOOKMARK [1][-]{section.8}{relax\137new\137pressure.py}{}% 8
-\BOOKMARK [1][-]{section.9}{pareto\137picture.py}{}% 9
-\BOOKMARK [1][-]{section.10}{single\137plot.py}{}% 10
-\BOOKMARK [1][-]{section.11}{scxrd\137screening}{}% 11
-\BOOKMARK [1][-]{appendix.A}{Powder spectra comparison}{}% 12
-\BOOKMARK [1][-]{appendix.B}{Single crystal spectra comparison}{}% 13
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{powder\137xrd\137screening.py}{}% 2
+\BOOKMARK [1][-]{section.3}{scxrd\137screening.py}{}% 3
+\BOOKMARK [1][-]{section.4}{split\137CIFs.py}{}% 4
+\BOOKMARK [1][-]{section.5}{sublattice\137split\137CIFs.py}{}% 5
+\BOOKMARK [1][-]{section.6}{fixcomp\137split\137CIFs.py}{}% 6
+\BOOKMARK [1][-]{section.7}{pareto\137picture.py}{}% 7
+\BOOKMARK [1][-]{section.8}{exclusion.py}{}% 8
+\BOOKMARK [1][-]{section.9}{find\137peak.py}{}% 9
+\BOOKMARK [1][-]{section.10}{change\137pressure.py}{}% 10
+\BOOKMARK [1][-]{section.11}{relax\137new\137pressure.py}{}% 11
+\BOOKMARK [1][-]{section.12}{single\137plot.py}{}% 12
+\BOOKMARK [1][-]{appendix.A}{Powder spectra comparison}{}% 13
+\BOOKMARK [1][-]{appendix.B}{Single crystal spectra comparison}{}% 14
