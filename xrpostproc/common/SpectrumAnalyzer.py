@@ -24,7 +24,8 @@ class SpectrumAnalyzer(object):
     def __init__(self, exp_pressure: int = None, th_pressure: int = None, extended_convex_hull: str = None,
                  extended_convex_hull_POSCARS: str = None, spectrum_file: str = None,
                  spectrum_starts: float = None, spectrum_ends: float = None,
-                 wavelength: float = None, sigma: float = None, hkl_file: str = None):
+                 wavelength: float = None, sigma: float = None, B0: float = 300,
+                 dB0: float = 3, hkl_file: str = None):
         """
         Initializes the class.
 
@@ -39,6 +40,8 @@ class SpectrumAnalyzer(object):
             wavelength:
             sigma:
             hkl_file:
+            B0:
+            dB0:
         """
         self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
 
@@ -52,6 +55,8 @@ class SpectrumAnalyzer(object):
             self.spectrum_ends = spectrum_ends
             self.wavelength = wavelength
             self.sigma = sigma
+            self.B0 = B0
+            self.dB0 = dB0
 
             for param in ['spectrum_starts', 'spectrum_ends', 'wavelength', 'sigma']:
                 if getattr(self, param) is None:
@@ -84,7 +89,9 @@ class SpectrumAnalyzer(object):
                 raise ValueError('Powder mode requires parameter match_tol.')
 
             # pressure correction
-            k = (300 / (150 + (22500 + 300 * self.deltaP) ** (1 / 2))) ** (1 / 3)
+            num = (self.B0 * (self.dB0 - 1))
+            den = (self.B0 * (self.dB0 - 2)) + np.sqrt(self.B0 ** 2 + 2 * num * self.deltaP)
+            k = (num / den) ** (1 / 3)
 
             spectrum = np.loadtxt(self.spectrum_file)
             exp_angles = spectrum[:, 0]

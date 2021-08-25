@@ -21,10 +21,12 @@ spectrum_ends = 22.0                # maximum angle for theoretical spectra
 wavelength = 0.6199                 # experimental wavelength
 sigma = 0.01                        # parameter for gaussian smearing of peaks
 match_tol = 0.25                    # tolerance for matching peaks in degrees
+B0 = 300                            # bulk modulus
+dB0 = 3                             # derivative of the bulk modulus with respect to pressure
 
 # set to True if you are using Individuals instead of extended_convex_hull
 individuals = False
 
 analyzer = SpectrumAnalyzer(exp_pressure, th_pressure, extended_convex_hull, extended_convex_hull_POSCARS,
-                            spectrum_file, spectrum_starts, spectrum_ends, wavelength, sigma)
+                            spectrum_file, spectrum_starts, spectrum_ends, wavelength, sigma, B0, dB0)
 analyzer.run(match_tol, individuals)
