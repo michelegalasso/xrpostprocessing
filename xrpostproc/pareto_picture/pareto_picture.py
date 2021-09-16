@@ -71,7 +71,7 @@ for i, (frontX, frontY) in enumerate(zip(p_frontsX, p_frontsY)):
                 Y.append(enthalpy)
 
 plt.plot(X, Y, 'o')
-plt.ylabel('Enthalpy (eV/f.u.)')
+plt.ylabel('Enthalpy (eV)')
 plt.xlabel('Distance between calculated and experimental X-ray spectrum')
 # plt.xlim(-0.2, 5)
 # plt.ylim(2.5, 8)
