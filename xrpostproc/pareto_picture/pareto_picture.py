@@ -18,12 +18,13 @@ plt.rcParams.update({'font.size': 22})
 # input parameters
 wavelength = 1.5406
 work_dir = 'KTaWO6_0gpa'
-spectrum_file = 'subtracted_KTaWO6_0GPa.txt'
+spectrum_file = 'subtracted_KTaWO6_0GPa.txt'        # None for single crystal
 
-poscars_iterator = iterator_poscar_file(os.path.join(work_dir, 'goodStructures_POSCARS'))
+if spectrum_file:
+    poscars_iterator = iterator_poscar_file(os.path.join(work_dir, 'goodStructures_POSCARS'))
 
-# in this folder I will save the produced pictures
-os.mkdir(os.path.join(work_dir, 'pareto_fronts'))
+    # in this folder I will save the produced pictures
+    os.mkdir(os.path.join(work_dir, 'pareto_fronts'))
 
 p_frontsX, p_frontsY = [[]], [[]]
 with open(os.path.join(work_dir, 'goodStructures'), 'r') as f:
@@ -44,14 +45,15 @@ with open(os.path.join(work_dir, 'goodStructures'), 'r') as f:
                 p_frontsY[rank].append(enthalpy)
                 p_frontsX[rank].append(xraydistance)
 
-                poscar_string = next(poscars_iterator)
-                if ID == poscar_string.split()[0]:
-                    if rank < 3:
-                        plot_against_experiment(poscar_string, os.path.join(work_dir, spectrum_file), wavelength,
-                                                os.path.join(work_dir, 'pareto_fronts'), rank + 1,
-                                                xraydistance, enthalpy)
-                else:
-                    raise ValueError('Structure IDs in the two input files do not match.')
+                if spectrum_file:
+                    poscar_string = next(poscars_iterator)
+                    if ID == poscar_string.split()[0]:
+                        if rank < 3:
+                            plot_against_experiment(poscar_string, os.path.join(work_dir, spectrum_file), wavelength,
+                                                    os.path.join(work_dir, 'pareto_fronts'), rank + 1,
+                                                    xraydistance, enthalpy)
+                    else:
+                        raise ValueError('Structure IDs in the two input files do not match.')
 
 plt.figure(figsize=(16, 9))
 ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1)*(n % 10 < 4) * n % 10::4])
@@ -72,9 +74,9 @@ for i, (frontX, frontY) in enumerate(zip(p_frontsX, p_frontsY)):
 
 plt.plot(X, Y, 'o')
 plt.ylabel('Enthalpy (eV)')
-plt.xlabel('Distance between calculated and experimental X-ray spectrum')
-# plt.xlim(-0.2, 5)
-# plt.ylim(2.5, 8)
+plt.xlabel('$F$')
+# plt.xlim(0, 4)
+# plt.ylim(-53, -20)
 plt.legend(loc='upper right', framealpha=1)
 
 # plt.show()
