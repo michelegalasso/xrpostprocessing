@@ -15,7 +15,7 @@ th_pressure = 150       # pressure of the USPEX calculation
 
 extended_convex_hull = 'extended_convex_hull.txt'                   # name of the extended_convex_hull file
 extended_convex_hull_POSCARS = 'extended_convex_hull_POSCARS.txt'   # name of the gatheredPOSCARS file
-spectrum_file = 'spectrum.txt'      # name of the experimental spectrum file
+spectrum_file = 'powder.txt'        # name of the experimental spectrum file
 spectrum_starts = 6.0               # minimum angle for theoretical spectra
 spectrum_ends = 22.0                # maximum angle for theoretical spectra
 wavelength = 0.6199                 # experimental wavelength
