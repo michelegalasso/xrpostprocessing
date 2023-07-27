@@ -46,7 +46,7 @@ def read_structures(individuals, gatheredPOSCARS, remove_hydrogens=False, fixcom
                                 enthalpy = float(values[enthalpy_position])
                                 fitness = float(values[enthalpy_position]) / structure.num_sites
                             else:
-                                fitness_position = headers.index('Enthalpy per Block above CCH (eV)')
+                                fitness_position = headers.index('Enthalpy above CH (eV/block)')
 
                                 enthalpy = float(values[enthalpy_position])
                                 fitness = float(values[fitness_position])
