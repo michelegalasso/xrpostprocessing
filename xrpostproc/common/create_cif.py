@@ -16,5 +16,5 @@ def create_cif(i, structure, ID, enthalpy, fitness, pmg_composition, pressure):
     iupac_formula = pmg_composition.iupac_formula.replace(' ', '')
 
     filename = '{}_EA{}_{:f}_{}_{}_{}_spg{}.cif'.format(i + 1, ID, fitness, enthalpy, iupac_formula, pressure,
-                                                        dtset['number'])
+                                                        dtset.number)
     structure.to(filename=os.path.join('results', filename), symprec=0.2)

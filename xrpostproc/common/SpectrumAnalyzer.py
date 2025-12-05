@@ -150,7 +150,7 @@ class SpectrumAnalyzer(object):
                                                      structure.atomic_numbers), symprec=0.2)
                 if dtset is not None:
                     filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spg{}'.format(fitness, ID, fit, composition, self.th_pressure,
-                                                                        dtset['number'])
+                                                                        dtset.number)
                     structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
                 else:
                     filename = '{:08.4f}_EA{}_{}_{}_{}GPa_spgND'.format(fitness, ID, fit, composition, self.th_pressure)
@@ -165,7 +165,7 @@ class SpectrumAnalyzer(object):
 
                 plt.plot(x, y_exp, label='experimental')
 
-                plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
+                plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None',
                          label='{} predicted'.format(ID))
 
                 plt.legend()
