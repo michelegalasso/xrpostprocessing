@@ -4,7 +4,7 @@ import numpy as np
 
 from tqdm import tqdm
 from copy import copy
-from pymatgen import Structure
+from pymatgen.core.structure import Structure
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 example_text = '''example:

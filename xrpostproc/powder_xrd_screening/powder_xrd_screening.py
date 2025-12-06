@@ -27,6 +27,10 @@ dB0 = 3                             # derivative of the bulk modulus with respec
 # set to True if you are using Individuals instead of extended_convex_hull
 individuals = False
 
-analyzer = SpectrumAnalyzer(exp_pressure, th_pressure, extended_convex_hull, extended_convex_hull_POSCARS,
-                            spectrum_file, spectrum_starts, spectrum_ends, wavelength, sigma, B0, dB0)
+analyzer = SpectrumAnalyzer(exp_pressure=exp_pressure, th_pressure=th_pressure,
+                            extended_convex_hull=extended_convex_hull,
+                            extended_convex_hull_POSCARS=extended_convex_hull_POSCARS,
+                            spectrum_file=spectrum_file, spectrum_starts=spectrum_starts,
+                            spectrum_ends=spectrum_ends, wavelength=wavelength,
+                            sigma=sigma, B0=B0, dB0=dB0)
 analyzer.run(match_tol, individuals)
