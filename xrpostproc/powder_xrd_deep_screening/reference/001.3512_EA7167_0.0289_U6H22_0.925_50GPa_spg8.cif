@@ -1,0 +1,40 @@
+# generated using pymatgen
+data_U3H11
+_symmetry_space_group_name_H-M   Cm
+_cell_length_a   11.44104533
+_cell_length_b   3.31284497
+_cell_length_c   3.33041543
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   98.16063153
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   8
+_chemical_formula_structural   U3H11
+_chemical_formula_sum   'U6 H22'
+_cell_volume   124.95255622
+_cell_formula_units_Z   2
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  'x, -y, z'
+  3  'x+1/2, y+1/2, z'
+  4  'x+1/2, -y+1/2, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  U  U0  2  0.05804400  0.50000000  0.30888300  1.0
+  U  U1  2  0.24937600  0.00000000  0.89144900  1.0
+  U  U2  2  0.44841350  0.50000000  0.58660900  1.0
+  H  H3  4  0.09372350  0.23808350  0.83830500  1.0
+  H  H4  4  0.29822300  0.24202700  0.41475200  1.0
+  H  H5  4  0.40730800  0.23821800  0.07952100  1.0
+  H  H6  2  0.15457300  0.00000000  0.33269000  1.0
+  H  H7  2  0.20047850  0.50000000  0.63397900  1.0
+  H  H8  2  0.20627450  0.50000000  0.12285600  1.0
+  H  H9  2  0.31580900  0.50000000  0.83895900  1.0
+  H  H10  2  0.38958400  0.00000000  0.68386100  1.0

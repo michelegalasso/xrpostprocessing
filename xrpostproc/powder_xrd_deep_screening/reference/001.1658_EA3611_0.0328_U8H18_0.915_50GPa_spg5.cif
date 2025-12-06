@@ -1,0 +1,36 @@
+# generated using pymatgen
+data_U4H9
+_symmetry_space_group_name_H-M   C2
+_cell_length_a   7.72455609
+_cell_length_b   4.57345769
+_cell_length_c   4.66995025
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   122.80187759
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   5
+_chemical_formula_structural   U4H9
+_chemical_formula_sum   'U8 H18'
+_cell_volume   138.67347873
+_cell_formula_units_Z   2
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, y, -z'
+  3  'x+1/2, y+1/2, z'
+  4  '-x+1/2, y+1/2, -z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  U  U0  4  0.08234150  0.91373850  0.85511550  1.0
+  U  U1  4  0.10209400  0.48001900  0.38963250  1.0
+  H  H2  4  0.14407400  0.08183000  0.53483950  1.0
+  H  H3  4  0.15573700  0.29159700  0.80085050  1.0
+  H  H4  4  0.15831950  0.53825150  0.05201050  1.0
+  H  H5  4  0.23179700  0.21189600  0.22270450  1.0
+  H  H6  2  0.00000000  0.24290950  0.00000000  1.0
