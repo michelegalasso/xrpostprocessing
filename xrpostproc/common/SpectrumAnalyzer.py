@@ -86,7 +86,7 @@ class SpectrumAnalyzer(object):
             calculator = XRDCalculator(wavelength=self.wavelength)
 
             # read files
-            data = read_structures(self.extended_convex_hull_POSCARS)
+            data = read_structures(gatheredPOSCARS=self.extended_convex_hull_POSCARS)
 
             for i, (tmp, ID, pmg_comp) in enumerate(data):
                 # structure symmetrization
