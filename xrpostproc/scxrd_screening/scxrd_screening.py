@@ -13,5 +13,5 @@ from xrpostproc.common.SpectrumAnalyzer import SpectrumAnalyzer
 gatheredPOSCARS = 'gatheredPOSCARS'                 # name of the gatheredPOSCARS file
 hkl_file = 'test_P1.hkl'                            # name of the experimental hkl file
 
-analyzer = SpectrumAnalyzer(extended_convex_hull_POSCARS=gatheredPOSCARS, hkl_file=hkl_file)
+analyzer = SpectrumAnalyzer(gathered_POSCARS=gatheredPOSCARS, hkl_file=hkl_file)
 analyzer.run()

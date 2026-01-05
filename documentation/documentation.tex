@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[htt]{hyphenat}
 \usepackage{chemformula}
 \usepackage{siunitx}
 \usepackage{appendix}
@@ -20,11 +21,46 @@
 %\end{abstract}
 
 \section{Introduction}
-In this document I present a series of Python scripts, used to postprocess the results of USPEX calculations when working with experimental X-ray diffraction data. The core of this collection of scripts is constituted by the scripts \texttt{powder\_xrd\_screening.py} and \texttt{scxrd\_screening.py}, which allow the user to quickly sort a number of structures read from the USPEX output according to their degree of agreement with experimental X-ray data. The first script works with powder XRD data, while the second script works with single crystal XRD data. The theory beyond the functioning of these two scripts is illustrated in appendices \ref{sec:powderspectracomp} and \ref{sec:scspectracomp}.
+In this document I present a series of Python scripts, used to postprocess the results of USPEX calculations when working with experimental X-ray diffraction data. The core of this collection of scripts is constituted by the scripts \texttt{powder\_xrd\_screening.py}, \texttt{powder\_xrd\_deep\_screening.py} and \texttt{scxrd\_screening.py}, which allow the user to quickly sort a number of structures read from the USPEX output according to their degree of agreement with experimental X-ray data. The first two scripts works with powder XRD data, while the third script works with single crystal XRD data. The theory beyond the functioning of these two scripts is illustrated in appendices \ref{sec:powderspectracomp} and \ref{sec:scspectracomp}.
 
-The first 5 scripts take in input a number of files written by USPEX, while the remaining scripts work with structural information contained in CIF or POSCAR files. All script take in input some information about the experimental X-ray data as well. At the time of writing this document, the collection of scripts has been tested on the following Python versions: 3.6, 3.7, 3.8.
+The first 6 scripts take in input a number of files written by USPEX, while the remaining scripts work with structural information contained in CIF or POSCAR files. All script take in input some information about the experimental X-ray data as well. At the time of writing this document, the collection of scripts has been tested on the following Python versions: 3.6, 3.7, 3.8, 3.13.
 
 \section{powder\_xrd\_screening.py}
+The script performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
+\begin{enumerate}
+	\item the experimental pressure
+	\item the pressure of the USPEX run
+	\item the start and end angles for the computation of theoretical spectra
+	\item the experimental wavelength
+	\item the value of $\sigma$ for the Gaussian smearing of peaks, used for generating output pictures
+	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental spectrum
+	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
+	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
+	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
+	\item the approximate bulk modulus $B_0$ of the material
+	\item the derivative of the bulk modulus with respect to pressure $B'_0$
+\end{enumerate}
+The script performs the following operations:
+\begin{enumerate}
+	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
+	\item it adjusts the cell parameters to the experimetal pressure using a second order Taylor expansion of the Birch-Murnaghan equation of state
+	\item it computes the theoretical X-ray spectrum
+	\item it computes the agreement F between the spectra
+	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2~\AA)
+	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
+\end{enumerate}
+The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
+\begin{description}
+	\item[F] is the agreement F between theoretical and experimental spectra
+	\item[ID] is the structure ID from the USPEX run
+	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
+	\item[iupacformula] is the \emph{IUPAC formula} of the structure
+	\item[pressure] is the pressure used for the USPEX run
+	\item[symmetry] is the space group number, determined with a tolerance of 0.2~\AA
+\end{description}
+\textbf{Example}: \texttt{python powder\_xrd\_screening.py}
+
+\section{powder\_xrd\_deep\_screening.py}
 The script performs a screening of USPEX results, looking for the structures that best match an experimental powder X-ray spectrum. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an input experimental spectrum, the theoretical spectrum is calculated for each structure in the USPEX run and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental spectra. The script contains the following input parameters:
 \begin{enumerate}
 	\item the experimental pressure

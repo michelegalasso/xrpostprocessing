@@ -21,51 +21,31 @@ from .read_structures import read_structures
 
 
 class SpectrumAnalyzer(object):
-    def __init__(self, exp_pressure: int = None, th_pressure: int = None, k_coeffs: np.ndarray = None,
-                 extended_convex_hull: str = None, extended_convex_hull_POSCARS: str = None,
-                 spectrum_file: str = None, spectrum_starts: float = None, spectrum_ends: float = None,
-                 wavelength: float = None, sigma: float = None, B0: float = 300,
-                 dB0: float = 3, hkl_file: str = None):
+    def __init__(self, gathered_POSCARS: str = None, spectrum_file: str = None,
+                 spectrum_starts: float = None, spectrum_ends: float = None, wavelength: float = None,
+                 sigma: float = None, hkl_file: str = None, th_peaks_penalty: float = None):
         """
         Initializes the class.
 
         Args:
-            exp_pressure:
-            th_pressure:
-            k_coeffs:
-            extended_convex_hull:
-            extended_convex_hull_POSCARS:
+            gathered_POSCARS:
             spectrum_file:
             spectrum_starts:
             spectrum_ends:
             wavelength:
             sigma:
             hkl_file:
-            B0:
-            dB0:
+            th_peaks_penalty:
         """
-        self.extended_convex_hull_POSCARS = extended_convex_hull_POSCARS
+        self.extended_convex_hull_POSCARS = gathered_POSCARS
 
         if spectrum_file is not None:
-            self.th_pressure = th_pressure
-
-            if exp_pressure is not None and k_coeffs is None:
-                self.exp_pressure = exp_pressure
-                self.k_coeffs = None
-            elif exp_pressure is None and k_coeffs is not None:
-                self.exp_pressure = None
-                self.k_coeffs = k_coeffs
-            else:
-                raise ValueError("Please give either exp_pressure or k_coeffs.")
-
-            self.extended_convex_hull = extended_convex_hull
             self.spectrum_file = spectrum_file
             self.spectrum_starts = spectrum_starts
             self.spectrum_ends = spectrum_ends
             self.wavelength = wavelength
             self.sigma = sigma
-            self.B0 = B0
-            self.dB0 = dB0
+            self.th_peaks_penalty = th_peaks_penalty
 
             for param in ['spectrum_starts', 'spectrum_ends', 'wavelength', 'sigma']:
                 if getattr(self, param) is None:
@@ -79,13 +59,13 @@ class SpectrumAnalyzer(object):
                     raise ValueError(f'SCXRD mode requires parameter {param}.')
             self.mode = 'scxrd'
 
-    def run(self, match_tol: float = None, individuals: bool = False):
+    def run(self, k_coeffs: np.ndarray = None, match_tol: float = None):
         """
         Creates pictures and cif files in results folder.
 
         Args:
-            match_tol:
-            individuals:
+            k_coeffs: user-defined pressure coefficients
+            match_tol: tolerance for peak matching
 
         Returns:
             None
@@ -97,15 +77,6 @@ class SpectrumAnalyzer(object):
             if match_tol is None:
                 raise ValueError('Powder mode requires parameter match_tol.')
 
-            k_coeffs = []
-            if self.k_coeffs is None:
-                deltaP = self.exp_pressure - self.th_pressure
-                num = (self.B0 * (self.dB0 - 1))
-                den = (self.B0 * (self.dB0 - 2)) + np.sqrt(self.B0 ** 2 + 2 * num * deltaP)
-                k_coeffs.append((num / den) ** (1 / 3))
-            else:
-                k_coeffs = self.k_coeffs
-
             spectrum = np.loadtxt(self.spectrum_file)
             exp_angles = spectrum[:, 0]
             exp_intensities = spectrum[:, 1]
@@ -115,9 +86,9 @@ class SpectrumAnalyzer(object):
             calculator = XRDCalculator(wavelength=self.wavelength)
 
             # read files
-            data = read_structures(self.extended_convex_hull, self.extended_convex_hull_POSCARS, fixcomp=individuals)
+            data = read_structures(self.extended_convex_hull_POSCARS)
 
-            for i, (tmp, ID, enth, fit, pmg_comp) in enumerate(data):
+            for i, (tmp, ID, pmg_comp) in enumerate(data):
                 # structure symmetrization
                 string = tmp.to(fmt='cif', symprec=0.2)
 
@@ -161,7 +132,7 @@ class SpectrumAnalyzer(object):
 
                     # theoretical rest
                     for intensity in th_intensities_rest:
-                        fitness += (intensity / 100) ** 2
+                        fitness += self.th_peaks_penalty * (intensity / 100) ** 2
 
                     fitnesses.append(fitness)
 
@@ -190,12 +161,11 @@ class SpectrumAnalyzer(object):
                 dtset = spglib.get_symmetry_dataset((structure.lattice.matrix, structure.frac_coords,
                                                      structure.atomic_numbers), symprec=0.2)
                 if dtset is not None:
-                    filename = '{:08.4f}_EA{}_{}_{}_{:.3f}_{}GPa_spg{}'.format(fitness, ID, fit, composition,
-                                                                           k_coeffs[j], self.th_pressure, dtset.number)
+                    filename = '{:08.4f}_EA{}_{}_{:.3f}_spg{}'.format(fitness, ID, composition,
+                                                                      k_coeffs[j], dtset.number)
                     structure.to(filename=os.path.join('results', filename + '.cif'), symprec=0.2)
                 else:
-                    filename = '{:08.4f}_EA{}_{}_{}_{:.3f}_{}GPa_spgND'.format(fitness, ID, fit, composition,
-                                                                           k_coeffs[j], self.th_pressure)
+                    filename = '{:08.4f}_EA{}_{}_{:.3f}_spgND'.format(fitness, ID, composition, k_coeffs[j])
 
                 # write png
                 plt.figure(figsize=(16, 9))

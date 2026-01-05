@@ -1,14 +1,15 @@
-\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{powder\137xrd\137screening.py}{}% 2
-\BOOKMARK [1][-]{section.3}{scxrd\137screening.py}{}% 3
-\BOOKMARK [1][-]{section.4}{split\137CIFs.py}{}% 4
-\BOOKMARK [1][-]{section.5}{sublattice\137split\137CIFs.py}{}% 5
-\BOOKMARK [1][-]{section.6}{fixcomp\137split\137CIFs.py}{}% 6
-\BOOKMARK [1][-]{section.7}{pareto\137picture.py}{}% 7
-\BOOKMARK [1][-]{section.8}{exclusion.py}{}% 8
-\BOOKMARK [1][-]{section.9}{find\137peak.py}{}% 9
-\BOOKMARK [1][-]{section.10}{change\137pressure.py}{}% 10
-\BOOKMARK [1][-]{section.11}{relax\137new\137pressure.py}{}% 11
-\BOOKMARK [1][-]{section.12}{single\137plot.py}{}% 12
-\BOOKMARK [1][-]{appendix.A}{Powder spectra comparison}{}% 13
-\BOOKMARK [1][-]{appendix.B}{Single crystal spectra comparison}{}% 14
+\BOOKMARK [1][-]{section.1}{\376\377\000I\000n\000t\000r\000o\000d\000u\000c\000t\000i\000o\000n}{}% 1
+\BOOKMARK [1][-]{section.2}{\376\377\000p\000o\000w\000d\000e\000r\000\137\000x\000r\000d\000\137\000s\000c\000r\000e\000e\000n\000i\000n\000g\000.\000p\000y}{}% 2
+\BOOKMARK [1][-]{section.3}{\376\377\000p\000o\000w\000d\000e\000r\000\137\000x\000r\000d\000\137\000d\000e\000e\000p\000\137\000s\000c\000r\000e\000e\000n\000i\000n\000g\000.\000p\000y}{}% 3
+\BOOKMARK [1][-]{section.4}{\376\377\000s\000c\000x\000r\000d\000\137\000s\000c\000r\000e\000e\000n\000i\000n\000g\000.\000p\000y}{}% 4
+\BOOKMARK [1][-]{section.5}{\376\377\000s\000p\000l\000i\000t\000\137\000C\000I\000F\000s\000.\000p\000y}{}% 5
+\BOOKMARK [1][-]{section.6}{\376\377\000s\000u\000b\000l\000a\000t\000t\000i\000c\000e\000\137\000s\000p\000l\000i\000t\000\137\000C\000I\000F\000s\000.\000p\000y}{}% 6
+\BOOKMARK [1][-]{section.7}{\376\377\000f\000i\000x\000c\000o\000m\000p\000\137\000s\000p\000l\000i\000t\000\137\000C\000I\000F\000s\000.\000p\000y}{}% 7
+\BOOKMARK [1][-]{section.8}{\376\377\000p\000a\000r\000e\000t\000o\000\137\000p\000i\000c\000t\000u\000r\000e\000.\000p\000y}{}% 8
+\BOOKMARK [1][-]{section.9}{\376\377\000e\000x\000c\000l\000u\000s\000i\000o\000n\000.\000p\000y}{}% 9
+\BOOKMARK [1][-]{section.10}{\376\377\000f\000i\000n\000d\000\137\000p\000e\000a\000k\000.\000p\000y}{}% 10
+\BOOKMARK [1][-]{section.11}{\376\377\000c\000h\000a\000n\000g\000e\000\137\000p\000r\000e\000s\000s\000u\000r\000e\000.\000p\000y}{}% 11
+\BOOKMARK [1][-]{section.12}{\376\377\000r\000e\000l\000a\000x\000\137\000n\000e\000w\000\137\000p\000r\000e\000s\000s\000u\000r\000e\000.\000p\000y}{}% 12
+\BOOKMARK [1][-]{section.13}{\376\377\000s\000i\000n\000g\000l\000e\000\137\000p\000l\000o\000t\000.\000p\000y}{}% 13
+\BOOKMARK [1][-]{appendix.A}{\376\377\000P\000o\000w\000d\000e\000r\000\040\000s\000p\000e\000c\000t\000r\000a\000\040\000c\000o\000m\000p\000a\000r\000i\000s\000o\000n}{}% 14
+\BOOKMARK [1][-]{appendix.B}{\376\377\000S\000i\000n\000g\000l\000e\000\040\000c\000r\000y\000s\000t\000a\000l\000\040\000s\000p\000e\000c\000t\000r\000a\000\040\000c\000o\000m\000p\000a\000r\000i\000s\000o\000n}{}% 15

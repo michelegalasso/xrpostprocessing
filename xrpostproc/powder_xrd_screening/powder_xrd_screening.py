@@ -6,31 +6,23 @@
 @brief:     Script which uses the class SpectrumAnalyzer.
 """
 
+import numpy as np
+
 from xrpostproc.common.SpectrumAnalyzer import SpectrumAnalyzer
 
 
 # input parameters (BaH)
-exp_pressure = 138      # pressure of the experimental powder
-th_pressure = 150       # pressure of the USPEX calculation
+th_peaks_penalty = 5.0                                          # additional penalty for non-matching th_peaks
+k_coeffs = np.arange(0.91, 1.09, 0.005)                         # coefficients for isotropic cell deformation
+gathered_POSCARS = 'UH_50_extended_convex_hull_POSCARS.txt'     # file with all structures in the POSCAR format
+spectrum_file = 'UH_50_powder.txt'                              # name of the experimental spectrum file
+spectrum_starts = 6.0                                           # minimum angle for theoretical spectra
+spectrum_ends = 22.0                                            # maximum angle for theoretical spectra
+wavelength = 0.4130                                             # experimental wavelength
+sigma = 0.01                                                    # parameter for gaussian smearing of peaks
+match_tol = 0.25                                                # tolerance for matching peaks in degrees
 
-extended_convex_hull = 'extended_convex_hull.txt'                   # name of the extended_convex_hull file
-extended_convex_hull_POSCARS = 'extended_convex_hull_POSCARS.txt'   # name of the gatheredPOSCARS file
-spectrum_file = 'powder.txt'        # name of the experimental spectrum file
-spectrum_starts = 6.0               # minimum angle for theoretical spectra
-spectrum_ends = 22.0                # maximum angle for theoretical spectra
-wavelength = 0.6199                 # experimental wavelength
-sigma = 0.01                        # parameter for gaussian smearing of peaks
-match_tol = 0.25                    # tolerance for matching peaks in degrees
-B0 = 300                            # bulk modulus
-dB0 = 3                             # derivative of the bulk modulus with respect to pressure
-
-# set to True if you are using Individuals instead of extended_convex_hull
-individuals = False
-
-analyzer = SpectrumAnalyzer(exp_pressure=exp_pressure, th_pressure=th_pressure,
-                            extended_convex_hull=extended_convex_hull,
-                            extended_convex_hull_POSCARS=extended_convex_hull_POSCARS,
-                            spectrum_file=spectrum_file, spectrum_starts=spectrum_starts,
-                            spectrum_ends=spectrum_ends, wavelength=wavelength,
-                            sigma=sigma, B0=B0, dB0=dB0)
-analyzer.run(match_tol, individuals)
+analyzer = SpectrumAnalyzer(gathered_POSCARS=gathered_POSCARS, spectrum_file=spectrum_file,
+                            spectrum_starts=spectrum_starts, spectrum_ends=spectrum_ends, wavelength=wavelength,
+                            sigma=sigma, th_peaks_penalty=th_peaks_penalty)
+analyzer.run(k_coeffs=k_coeffs, match_tol=match_tol)
