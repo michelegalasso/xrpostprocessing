@@ -191,14 +191,15 @@ It allows to quickly filter a multitude of CIF files, by removing those which do
 \begin{enumerate}
 	\item the wavelength of the incident radiation in \SI{}{\angstrom}
 	\item the peak cut-off, in \% of the maximum intensity
-	\item a number of search intervals in degrees, expressed as two angles separated by a hyphen (-)
+	\item a number of search intervals in degrees, defining the search region
+	\item the extremes of the generated X-ray diffraction pattern in degrees
 \end{enumerate}
 The script works in a folder with many CIF files, and performs the following:
 \begin{enumerate}
-	\item it opens, one by one, all CIF files and it predicts the XRD pattern of the structure according to the given wavelength
+	\item it opens, one by one, all CIF files and it predicts the X-ray diffraction pattern of the structure according to the given wavelength
 	\item if there is at least one search region which does not contain any peak bigger than the given cut-off, it deletes the CIF file
 \end{enumerate}
-\textbf{Example}: \texttt{python find\_peak.py 0.6199 15 25-28 31-32}
+\textbf{Example}: \texttt{python find\_peak.py --wavelength 0.6199 --cutoff 15 \\ --lextremes 25,31 --rextremes 28,32 --minangle 5 --maxangle 60}
 
 \section{change\_pressure.py}
 It translates the structures contained in many CIF files to a different pressure, by deforming the lattice parameters using a second order Taylor expansion of the Birch-Murnaghan equation. More details about the underlying theory can be found in appendix \ref{sec:powderspectracomp}. The script takes the following arguments from command line:
