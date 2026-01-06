@@ -202,7 +202,7 @@ The script works in a folder with many CIF files, and performs the following:
 \textbf{Example}: \texttt{python find\_peak.py --wavelength 0.6199 --cutoff 15 \\ --lextremes 25,31 --rextremes 28,32 --minangle 5 --maxangle 60}
 
 \section{change\_pressure.py}
-It translates the structures contained in many CIF files to a different pressure, by deforming the lattice parameters using a second order Taylor expansion of the Birch-Murnaghan equation. More details about the underlying theory can be found in appendix \ref{sec:powderspectracomp}. The script takes the following arguments from command line:
+It translates the structures contained in many CIF files to a different pressure, by deforming the lattice parameters using a second order Taylor expansion of the Birch-Murnaghan equation of state. More details about the underlying theory can be found in appendix \ref{sec:birchmurnaghan}. The script takes the following arguments from command line:
 \begin{enumerate}
 	\item the initial pressure
 	\item the final pressure
@@ -237,9 +237,6 @@ This simple script is used to obtain a plot of the predicted powder XRD spectrum
 \end{enumerate}
 \textbf{Example}: \texttt{python single\_plot.py}
 
-\vspace{0.2cm}
-\noindent \textbf{Example}: \texttt{python scxrd\_screening.py}
-
 \newpage
 \appendix
 \appendixpage
@@ -247,15 +244,35 @@ This simple script is used to obtain a plot of the predicted powder XRD spectrum
 \section{Powder spectra comparison}
 \label{sec:powderspectracomp}
 
-We developed a code which computes, from the experimental powder XRD spectrum and the USPEX output, the degree of disagreement (fitness) of each relaxed structure with the experimental data. The USPEX calculation and the experimental spectrum do not need to be exactly at the same pressure, but the two pressures need to be \emph{close}, that is, no more than \SI{20}{GPa} apart.
+We developed a code which computes, from the experimental powder diffraction pattern and a set of crystal structures, the degree of disagreement (fitness) of each structure with the experimental data.
 
-Since we have a pressure difference, we first translate each calculated structure to the experimental pressure using the Birch-Murnaghan equation
+In the case of powder X-ray diffraction patterns, for each peak we know the diffraction angle and the relative intensity, while the intensity of the highest peak in each spectrum has been conventionally given the value 100. We define a \emph{match} between a theoretical and an experimental peak the case when the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities. The fitness between a calculated powder X-ray diffraction pattern and the experimental diffraction pattern is defined by the following fitness function
+\begin{equation*}
+	F = \sum_{i, j}^{match} \left( \frac{h_i^{exp} - h_j^{th}}{100} \right)^2 \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{exp \, rest} \left( \frac{h_i^{exp}}{100} \right)^2 + p^{th} \cdot \sum_i^{th \, rest} \left( \frac{h_i^{th}}{100} \right)^2
+\end{equation*}
+where the $h_i$ are diffraction intensities. The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the intensities of the two matched peaks are close to each other. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. The third term, analogously, is a sum over the \emph{theoretical rest}. The user-defined coefficient $p^{th} > 1$ which appears in the last term introduces an additional penalty for non-matching theoretical peaks. It is clear that a low value of F gives a good agreement between calculated and experimental powder X-ray diffraction patterns, allowing a quick identification of promising candidates structures.
+
+\section{Single crystal spectra comparison}
+\label{sec:scspectracomp}
+
+In the case of single crystal X-ray diffraction patterns, for each reflection we know the Miller indices $(h, k, l)$, its intensity $I$ and its uncertainty of measure~$\sigma$. As fitness we use the weighted R-factor, given by
+\[
+	wR = \sqrt{\frac{\sum \frac{1}{\sigma^2} (I_{exp} - I_{th})^2}{\sum \frac{1}{\sigma^2} I_{exp}^2}}
+\]
+where the sums run over all the experimental reflections and theoretical reflections at the same Miller indices $(h, k, l)$. If an experimental reflection is not matched by any theoretical reflection an error is returned, while in the opposite case the unmatched theoretical reflection is simply ignored.
+
+\section{Pressure change}
+\label{sec:birchmurnaghan}
+
+It often happens that the USPEX calculation and the experimental data are not exactly at the same pressure, but the two pressures are \emph{close}, that is, no more than \SI{20}{GPa} apart. In this case, our script \texttt{change\_pressure.py} can be used to translate the theoretical structures to the experimental pressure.
+
+We start from the Birch-Murnaghan equation of state
 \begin{equation*}
 	\Delta P = \frac{3 B_0}{2} \left[ \left( \frac{V_0}{V} \right)^{\frac{7}{3}} - \left( \frac{V_0}{V} \right)^{\frac{5}{3}} \right] \left\{ 1 + \frac{3}{4} \left( B'_0 - 4 \right) \left[ \left( \frac{V_0}{V} \right)^{\frac{2}{3}} - 1 \right] \right\}
 \end{equation*}
-where $\Delta P$ is the pressure difference, $V_0$ is the volume of the unit cell at the calculated pressure, $V$ is the volume at the experimental pressure, $B_0$ is the bulk modulus and $B'_0$ is the derivative of the bulk modulus with respect to pressure. The parameters $B_0$ and $B'_0$ are user-defined and, if not explicitly specified, they default to the average values $B_0 = 300$ and $B'_0 = 3$. 
+where $\Delta P$ is the pressure difference, $V_0$ is the volume of the unit cell at the calculated pressure, $V$ is the volume at the experimental pressure, $B_0$ is the bulk modulus and $B'_0$ is the derivative of the bulk modulus with respect to pressure. The parameters $B_0$ and $B'_0$ are user-defined and, if not explicitly specified, they default to the average values $B_0 = 300$ and $B'_0 = 3$.
 
-Assuming that, for small pressure variations, $V_0/V$ will be close to 1, we approximate the Birch-Murnaghan equation to a second order Taylor expansion in $V_0/V$ and we get the volume $V$ at the experimental pressure:
+Assuming that, for small pressure variations, $V_0/V$ is close to 1, we can approximate the Birch-Murnaghan equation of state to a second order Taylor expansion in $V_0/V$ and get the volume $V$ at the experimental pressure:
 \begin{equation*}
 	V = \frac{B_0 (B'_0 - 1)}{B_0 (B'_0 - 2) + \sqrt{B_0^2 + 2 B_0 (B'_0 - 1) \Delta P}} V_0
 \end{equation*}
@@ -263,21 +280,6 @@ Then we define the following scaling factor
 \begin{equation*}
 	k = \sqrt[3]{\frac{B_0 (B'_0 - 1)}{B_0 (B'_0 - 2) + \sqrt{B_0^2 + 2 B_0 (B'_0 - 1) \Delta P}}}
 \end{equation*}
-that will be used to rescale the lattice parameters of all the calculated structures. After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the theoretical XRD spectra are computed. Both the theoretical and the experimental spectra are in the form of a series of peaks.
-
-In the case of powder XRD spectra, for each peak we know the diffraction angle and the relative intensity, while the intensity of the highest peak in each spectrum has been conventionally given the value 100. We define a \emph{match} between a theoretical and an experimental peak the case when the two peaks are less than \emph{match\_tol} degrees apart, regardless of their intensities. The fitness between a calculated powder XRD spectrum and the experimental spectrum is defined by the following fitness function
-\begin{equation*}
-	F = \sum_{i, j}^{match} \left( \frac{h_i^{exp} - h_j^{th}}{100} \right)^2 \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{exp \, rest} \left( \frac{h_i^{exp}}{100} \right)^2 + \sum_i^{th \, rest} \left( \frac{h_i^{th}}{100} \right)^2
-\end{equation*}
-where the $h_i$ are diffraction intensities. The first term of the fitness is a sum over the matched peaks, and each addend of this sum will be smaller the more the intensities of the two matched peaks are close to each other. The second term is a sum over the experimental peaks that are left after our matching, we call these peaks \emph{experimental rest}. The third term, analogously, is a sum over the \emph{theoretical rest}. It is clear that a low value of F gives a good agreement between calculated and experimental powder XRD spectra, allowing a quick identification of promising candidates in the USPEX output.
-
-\section{Single crystal spectra comparison}
-\label{sec:scspectracomp}
-
-In the case of single crystal XRD spectra, for each reflection we know the Miller indices $(h, k, l)$, its intensity $I$ and its uncertainty of measure $\sigma$. As fitness we use the weighted R-factor, given by
-\[
-	wR = \sqrt{\frac{\sum \frac{1}{\sigma^2} (I_{exp} - I_{th})^2}{\sum \frac{1}{\sigma^2} I_{exp}^2}}
-\]
-where the sums run over all the experimental reflections and theoretical reflections at the same Miller indices $(h, k, l)$. If an experimental reflection is not matched by any theoretical reflection an error is returned, while in the opposite case the unmatched theoretical reflection is simply ignored.
+that will be used to rescale the lattice parameters of all the calculated structures. After this rescaling, the relaxed structures are symmetrized with a tolerance of 0.2 \SI{}{\angstrom} and the corresponding CIF files are written.
 
 \end{document}
