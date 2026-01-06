@@ -40,6 +40,10 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
     plt.rcParams.update({'font.size': 22})
     plt.figure(figsize=(16, 9))
 
+    # plot theoretical lines
+    plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', label='{} predicted'.format(ID))
+
+    # plot experimental peaks
     if len(exp_angles) > 50:
         plt.plot(exp_angles, exp_intensities, label='experimental')
     else:
@@ -50,8 +54,6 @@ def plot_against_experiment(poscar_string, exp_spectrum_file, wavelength, folder
             y_exp += intensity * np.exp(-((x - angle) ** 2) / (2 * sigma ** 2))
         plt.plot(x, y_exp, label='experimental')
 
-    plt.stem(th_angles, th_intensities, 'r', markerfmt='None', basefmt='None', use_line_collection=True,
-             label='{} predicted'.format(ID))
     plt.xlabel('2θ')
     plt.ylabel('Intensity')
     plt.legend()
