@@ -47,7 +47,7 @@ for f in tqdm(cif_files):
         excl_peaks.extend([peak for angle, peak in zip(pattern.x, pattern.y) if region[0] < angle < region[1]])
 
     excl_peaks = np.array(excl_peaks)
-    if not np.alltrue(excl_peaks <= args.cutoff):
+    if not np.all(excl_peaks <= args.cutoff):
         to_remove = copy(f)
 
 if to_remove in os.listdir('.'):
