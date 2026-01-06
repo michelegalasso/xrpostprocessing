@@ -103,32 +103,31 @@ The name of each CIF file has the format \texttt{i}\_ID\_\texttt{fitness}\_\text
 \section{powder\_xrd\_screening.py}
 The script screens a collection of structures to identify those that best match an experimental powder X-ray diffraction pattern. For the theory behind this script, see appendix \ref{sec:powderspectracomp}. In a few words, given an experimental pattern in input, the theoretical diffraction pattern is calculated for each candidate structure and a value F is computed. The smaller is F, the better is the agreement between theoretical and experimental patterns. The script contains the following input parameters:
 \begin{enumerate}
-	\item the start and end angles for the computation of theoretical spectra
-	\item the experimental wavelength
+	\item the name of the file \texttt{gathered\_POSCARS}, which is a collection of crystal structures in the POSCAR format
+	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental powder diffraction pattern
+	\item the start and end angles for the computation of theoretical diffraction patterns
+	\item an array of coefficients $k$ for performing isotropic deformations of the unit cell for all crystal structures
 	\item the value of $\sigma$ for the Gaussian smearing of peaks, used for generating output pictures
-	\item the name of the \emph{spectrum file}, containing angles and intensities of the experimental spectrum
-	\item the name of the file \texttt{extended\_convex\_hull} from USPEX
-	\item the name of the file \texttt{extended\_convex\_hull\_POSCARS} from USPEX
+	\item the experimental wavelength
 	\item the parameter \emph{match\_tol}, that is the tolerance for matching experimental peaks with theoretical peaks, in degrees
-	\item the approximate bulk modulus $B_0$ of the material
-	\item the derivative of the bulk modulus with respect to pressure $B'_0$
+	\item the parameter \emph{th\_peaks\_penalty}, which controls the additional penalty given to non-matching theoretical peaks in our fitness function
 \end{enumerate}
 The script performs the following operations:
 \begin{enumerate}
-	\item for each structure, it reads the parameter \emph{fitness} from \texttt{extended\_convex\_hull} and the geometry from \texttt{extended\_convex\_hull\_POSCARS}
-	\item it adjusts the cell parameters to the experimetal pressure using a second order Taylor expansion of the Birch-Murnaghan equation of state
-	\item it computes the theoretical X-ray spectrum
-	\item it computes the agreement F between the spectra
-	\item it outputs a CIF file with the symmetrized structure (tolerance 0.2~\AA)
-	\item it outputs a PNG graph with the theoretical and experimental spectra superimposed for comparison
+	\item for each structure, it reads the geometry from \texttt{gathered\_POSCARS}
+	\item for each given value of \emph{k}, it performs an isotropic deformation of the unit cell by multiplying each lattice parameter by \emph{k}
+	\item it computes the theoretical X-ray diffraction pattern of the so-obtained structure
+	\item it computes the disagreement F between theoretical and experimental diffraction patterns using our fitness function
+	\item for each structure and for the lowest value of F across all the coefficients \emph{k}, it outputs a CIF file with the symmetrized structure (tolerance 0.2~\AA)
+	\item for each structure and for the lowest value of F across all the coefficients \emph{k}, it outputs a PNG graph with the theoretical and experimental diffraction patterns superimposed for comparison
+	\item for each structure, it outputs a PNG graph which shows the variation of F with \emph{k}
 \end{enumerate}
-The name of each CIF and PNG file have the format \texttt{F\_ID\_fitness\_iupacformula\_ \\ pressure\_symmetry}, where:
+The name of each CIF and PNG file have the format \texttt{F\_ID\_iupacformula\_k\_ \\ symmetry}, where:
 \begin{description}
-	\item[F] is the agreement F between theoretical and experimental spectra
-	\item[ID] is the structure ID from the USPEX run
-	\item[fitness] is the \texttt{fitness} of the structure from the USPEX run
+	\item[F] is the disagreement F between theoretical and experimental diffraction patterns
+	\item[ID] is the comment provided in the first line of each POSCAR (if the POSCAR file is produced by USPEX, this is the structure ID in the USPEX run)
 	\item[iupacformula] is the \emph{IUPAC formula} of the structure
-	\item[pressure] is the pressure used for the USPEX run
+	\item[k] is the value of the coefficient \emph{k} which gave the lowest disagreement F
 	\item[symmetry] is the space group number, determined with a tolerance of 0.2~\AA
 \end{description}
 \textbf{Example}: \texttt{python powder\_xrd\_screening.py}
